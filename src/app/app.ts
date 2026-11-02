@@ -2,6 +2,7 @@ import { Component, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AssessmentService } from './services/assessment.service';
+import { AssessmentItem } from './models/assessment.model';
 
 @Component({
   selector: 'app-root',
@@ -21,6 +22,9 @@ export class App {
 
   // Active domain in page 2 (0 to 5)
   readonly activeDomainIndex = signal<number>(0);
+
+  // Track which items have their notes / conditions drawer expanded
+  readonly expandedNotes = signal<Record<string, boolean>>({});
 
   // Toggles for Domain 5 official supplementary forms
   readonly showObservationSheet = signal<boolean>(false);
@@ -42,24 +46,6 @@ export class App {
     if (title.includes('المعرفي')) return 'المجال المعرفي';
     if (title.includes('الاجتماعي')) return 'المجال الاجتماعي';
     return title.replace(/^مجال\s+/, '').trim();
-  }
-
-  readonly itemIndexMap = computed(() => {
-    const map = new Map<string, number>();
-    const domain = this.currentDomain();
-    if (domain?.strands) {
-      let idx = 1;
-      for (const strand of domain.strands) {
-        for (const item of strand.items) {
-          map.set(item.id, idx++);
-        }
-      }
-    }
-    return map;
-  });
-
-  getItemIndex(itemId: string): number {
-    return this.itemIndexMap().get(itemId) ?? 1;
   }
 
   // Navigation
@@ -99,12 +85,36 @@ export class App {
     this.service.setScore(itemId, score);
   }
 
+  isAutoCalculated(itemId: string): boolean {
+    return !!this.service.evaluations()[itemId]?.isAutoCalculated;
+  }
+
+  getNoteSymbol(itemId: string): string | undefined {
+    return this.service.evaluations()[itemId]?.noteSymbol;
+  }
+
   getNote(itemId: string): string {
     return this.service.evaluations()[itemId]?.customNote ?? '';
   }
 
   setNote(itemId: string, note: string) {
     this.service.setCustomNote(itemId, note);
+  }
+
+  toggleNoteDrawer(itemId: string) {
+    this.expandedNotes.update(prev => ({
+      ...prev,
+      [itemId]: !prev[itemId]
+    }));
+  }
+
+  isNoteDrawerOpen(itemId: string): boolean {
+    return !!this.expandedNotes()[itemId];
+  }
+
+  hasNotesOrSymbol(itemId: string): boolean {
+    const ev = this.service.evaluations()[itemId];
+    return !!(ev?.noteSymbol || (ev?.customNote && ev.customNote.trim().length > 0));
   }
 
   resetAll() {
@@ -114,6 +124,7 @@ export class App {
       this.currentPage.set(1);
       this.showObservationSheet.set(false);
       this.showLanguageSummarySheet.set(false);
+      this.expandedNotes.set({});
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }
@@ -122,4 +133,3 @@ export class App {
     window.print();
   }
 }
-

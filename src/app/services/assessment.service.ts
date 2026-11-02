@@ -1,6 +1,7 @@
 import { Injectable, signal, computed } from '@angular/core';
 import {
   AssessmentDomain,
+  AssessmentItem,
   ChildProfile,
   ItemEvaluation,
   DomainCalculation
@@ -16,23 +17,34 @@ export class AssessmentService {
   readonly activeView = signal<'assessment' | 'cutoff' | 'summary'>('assessment');
   readonly activeDomainId = signal<string>(this.domains[0]?.id || '');
 
-  // Exact fields from document:
+  // Exact profile fields with duplicate examiner removed:
   readonly childProfile = signal<ChildProfile>({
     childName: '',
     birthDate: '',
     assessmentDate: new Date().toISOString().split('T')[0],
     familyAddress: '',
     formFiller: '',
-    examiner: '',
     testPeriod: 'الفترة الأولى',
     notes: ''
   });
 
-  // Map of itemId -> evaluation { score, noteSymbol, customNote }
+  // Map of itemId -> evaluation { score, noteSymbol, customNote, isAutoCalculated }
   readonly evaluations = signal<Record<string, ItemEvaluation>>({});
 
-  // Official Note Symbols verbatim from document:
-  // ل=ملحوظات, د=مفتاح الدرجات, س=قُدمت له مساعدة, س ع=السلوك أُعيق, خ م=اختبار مباشر, ع=تعديل/تكييف, ج=جودة الأداء, ق=تقرير
+  // Fast item lookup map
+  readonly itemMap = new Map<string, AssessmentItem>();
+
+  constructor() {
+    for (const domain of this.domains) {
+      for (const strand of domain.strands) {
+        for (const item of strand.items) {
+          this.itemMap.set(item.id, item);
+        }
+      }
+    }
+  }
+
+  // Official Note Symbols verbatim from approved document:
   readonly noteSymbols = [
     { code: 'س', label: 'قُدمت له مساعدة', shortLabel: 'مساعدة' },
     { code: 'س ع', label: 'السلوك أُعيق', shortLabel: 'سلوك أُعيق' },
@@ -43,19 +55,13 @@ export class AssessmentService {
   ];
 
   // Official maximum possible raw score specified in document for each domain:
-  // مجال الحركات الدقيقة: 30
-  // مجال الحركات الكبيرة: 30
-  // المجال التكيفي: 70
-  // المجال المعرفي: 106
-  // مجال التواصل الاجتماعي: 166
-  // المجال الاجتماعي: 94
   readonly officialMaxScores: Record<string, number> = {
-    'مجال الحركات الدقيقة': 30,
-    'مجال الحركات الكبيرة': 30,
-    'المجال التكيفي': 70,
-    'المجال المعرفي': 106,
-    'مجال التواصل الاجتماعي': 166,
-    'المجال الاجتماعي': 94
+    'مجال الحركات الدقيقة': 30,     // 15 items * 2
+    'مجال الحركات الكبيرة': 34,     // 17 items * 2
+    'المجال التكيفي': 70,           // 35 items * 2
+    'المجال المعرفي': 106,          // 53 items * 2
+    'مجال التواصل الاجتماعي': 98,    // 49 items * 2
+    'المجال الاجتماعي': 94          // 47 items * 2
   };
 
   // Calculations for each domain
@@ -145,15 +151,101 @@ export class AssessmentService {
     }));
   }
 
+  /**
+   * Scoring Logic complying with exact client specifications:
+   * بالنسبة للبند الرئيسي (ص) الذي يندرج تحته بنود فرعية (مثل 2.1 و 2.2):
+   * - إذا حصلت جميع البنود الفرعية التابعة له على درجة (2)، يتم تلقائياً تعيين درجة البند الرئيسي (ص) = 2.
+   * - إذا حصلت جميع البنود الفرعية التابعة له على درجة (0)، يتم تلقائياً تعيين درجة البند الرئيسي (ص) = 0.
+   * - في حال وجود تفاوت أو اختلاف في الدرجات الفرعية (مزيج بين 1 و 2، أو 0 و 1، أو لم تكن كلها متطابقة 2 أو كلها 0)، يتم تعيين درجة البند الرئيسي (ص) = 1.
+   * - يجب أن تتحدث قيمة البند الرئيسي تلقائياً عند تغيير أي درجة من درجات البنود الفرعية التابعة له.
+   */
   setScore(itemId: string, score: number) {
     this.evaluations.update(prev => {
       const current = prev[itemId] || { score: null };
       const newScore = current.score === score ? null : score;
-      return {
+
+      const next = {
         ...prev,
-        [itemId]: { ...current, score: newScore }
+        [itemId]: { ...current, score: newScore, isAutoCalculated: false }
       };
+
+      const item = this.itemMap.get(itemId);
+      if (!item) return next;
+
+      // If this item is a sub-item, recalculate its parent cutoff item
+      if (item.parentItemId) {
+        this.updateParentCutoffScore(item.parentItemId, next);
+      }
+
+      return next;
     });
+  }
+
+  /**
+   * Recalculates the parent (ص) item score based on all its sub-items
+   */
+  private updateParentCutoffScore(parentItemId: string, evals: Record<string, ItemEvaluation>) {
+    const parentItem = this.itemMap.get(parentItemId);
+    if (!parentItem || !parentItem.subItemIds || parentItem.subItemIds.length === 0) {
+      return;
+    }
+
+    const subItemIds = parentItem.subItemIds;
+    const subScores = subItemIds.map(id => evals[id]?.score);
+    const answeredScores = subScores.filter((s): s is number => s !== null && s !== undefined);
+
+    const parentCurrent = evals[parentItemId] || { score: null };
+
+    // If no sub-items are answered at all, reset parent score to null
+    if (answeredScores.length === 0) {
+      evals[parentItemId] = {
+        ...parentCurrent,
+        score: null,
+        isAutoCalculated: false
+      };
+      return;
+    }
+
+    const allAnswered = answeredScores.length === subItemIds.length;
+    const allAreTwo = allAnswered && answeredScores.every(s => s === 2);
+    const allAreZero = allAnswered && answeredScores.every(s => s === 0);
+
+    let calculatedScore: number;
+
+    if (allAreTwo) {
+      // إذا حصلت جميع البنود الفرعية التابعة له على درجة (2)، يتم تلقائياً تعيين درجة البند الرئيسي (ص) = 2.
+      calculatedScore = 2;
+    } else if (allAreZero) {
+      // إذا حصلت جميع البنود الفرعية التابعة له على درجة (0)، يتم تلقائياً تعيين درجة البند الرئيسي (ص) = 0.
+      calculatedScore = 0;
+    } else if (allAnswered) {
+      // في حال وجود تفاوت أو اختلاف في الدرجات الفرعية (مزيج بين 1 و 2، أو 0 و 1، أو لم تكن كلها متطابقة 2 أو كلها 0)، يتم تعيين درجة البند الرئيسي (ص) = 1.
+      calculatedScore = 1;
+    } else {
+      // Partial evaluation (some answered, some not yet answered):
+      const has2 = answeredScores.includes(2);
+      const has0 = answeredScores.includes(0);
+      const has1 = answeredScores.includes(1);
+
+      if (has1 || (has2 && has0)) {
+        // Any variation or score of 1 means it cannot be all 2 or all 0
+        calculatedScore = 1;
+      } else if (answeredScores.every(s => s === 2)) {
+        // All answered so far are 2
+        calculatedScore = 2;
+      } else if (answeredScores.every(s => s === 0)) {
+        // All answered so far are 0
+        calculatedScore = 0;
+      } else {
+        calculatedScore = 1;
+      }
+    }
+
+    evals[parentItemId] = {
+      ...parentCurrent,
+      score: calculatedScore,
+      isAutoCalculated: true
+    };
   }
 
   setNoteSymbol(itemId: string, symbol: string) {
@@ -184,7 +276,7 @@ export class AssessmentService {
       const next = { ...prev };
       domain.strands.forEach(s => {
         s.items.forEach(item => {
-          next[item.id] = { ...(next[item.id] || {}), score };
+          next[item.id] = { ...(next[item.id] || {}), score, isAutoCalculated: item.isCutoff };
         });
       });
       return next;
@@ -199,7 +291,6 @@ export class AssessmentService {
       assessmentDate: new Date().toISOString().split('T')[0],
       familyAddress: '',
       formFiller: '',
-      examiner: '',
       testPeriod: 'الفترة الأولى',
       notes: ''
     });

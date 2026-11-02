@@ -1,9 +1,13 @@
 export interface AssessmentItem {
   id: string;
+  itemNumber: string; // e.g. "1-", "1.1", "2-", "2.1", "2.2"
+  paperNumber?: string; // original paper numbering string
   text: string;
   raw: string;
-  isCutoff: boolean; // Indicates (ص) cutoff score item
+  isCutoff: boolean; // Indicates (ص) cutoff score item (Main Item)
   maxScore: number;
+  parentItemId?: string; // ID of the parent cutoff item if this is a sub-item
+  subItemIds?: string[]; // IDs of sub-items if this is a main cutoff item
 }
 
 export interface AssessmentStrand {
@@ -25,8 +29,7 @@ export interface ChildProfile {
   birthDate: string;
   assessmentDate: string;
   familyAddress: string;
-  formFiller: string;
-  examiner: string;
+  formFiller: string; // اسم الشخص الذي يكمل الاستمارة
   testPeriod: string;
   notes: string;
 }
@@ -35,6 +38,7 @@ export interface ItemEvaluation {
   score: number | null; // 0, 1, 2
   noteSymbol?: string; // س, س ع, خ م, ع, ج, ق
   customNote?: string;
+  isAutoCalculated?: boolean; // Indicates main item score calculated from sub-items
 }
 
 export interface DomainCalculation {
