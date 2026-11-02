@@ -1,0 +1,763 @@
+<div class="site-container">
+  <!-- Official Header from Document -->
+  <header class="top-nav no-print">
+    <!-- Top Ribbon: Vision & Values (رؤيتنا والقيم الحاكمة من الملف حرفياً) -->
+    <div class="moe-top-ribbon">
+      <div class="ribbon-container">
+        <div class="vision-quote">
+          <span class="ribbon-tag">رؤيتنا:</span>
+          <span>متعلم معتز بدينه.. منتم لوطنه .. منتج للمعرفة ..منافس عالميًا</span>
+        </div>
+        <div class="values-quote">
+          <span class="ribbon-tag gold">القيم الحاكمة:</span>
+          <span>النزاهة .. الإنجاز.. التكامل.. الإبداع.. الشفافية.. العمل المؤسسي</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Navigation Bar with Official Logos -->
+    <div class="nav-content">
+      <div class="moe-brand-area">
+        <img src="moe-logo.svg" alt="وزارة التعليم - Ministry of Education" class="moe-official-logo-img">
+        <div class="moe-brand-divider"></div>
+        <div class="moe-brand-titles">
+          <h1 class="portal-name">استمارة تسجيل بيانات ملاحظة الطفل</h1>
+          <span class="gov-title">المملكة العربية السعودية • وزارة التعليم</span>
+        </div>
+      </div>
+
+      <!-- 3 Clear Stages Stepper -->
+      <div class="moe-stepper">
+        <button 
+          type="button" 
+          class="step-item" 
+          [class.active]="currentPage() === 1" 
+          (click)="setPage(1)">
+          <span class="step-badge">1</span>
+          <span>بيانات الطفل والتعليمات</span>
+        </button>
+
+        <span class="arrow">‹</span>
+
+        <button 
+          type="button" 
+          class="step-item" 
+          [class.active]="currentPage() === 2" 
+          (click)="setPage(2)">
+          <span class="step-badge">2</span>
+          <span>جداول الملاحظة والتقييم</span>
+        </button>
+
+        <span class="arrow">‹</span>
+
+        <button 
+          type="button" 
+          class="step-item step-res" 
+          [class.active]="currentPage() === 3" 
+          (click)="setPage(3)">
+          <span class="step-badge">3</span>
+          <span>النتائج وحساب درجات القطع والطباعة</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Official Print Header (Visible during Print) -->
+  <div class="print-official-header print-only">
+    <div class="p-header-flex">
+      <div class="p-right-side">
+        <img src="moe-logo.svg" alt="وزارة التعليم" class="p-moe-logo-img">
+      </div>
+
+      <div class="p-center">
+        <h2>استمارة تسجيل بيانات ملاحظة الطفل</h2>
+      </div>
+
+      <div class="p-left-side">
+        تاريخ اليوم: {{ service.childProfile().assessmentDate }}<br>
+        فترة الاختبار: {{ service.childProfile().testPeriod }}
+      </div>
+    </div>
+    <div class="p-motto-bar">
+      رؤيتنا: متعلم معتز بدينه.. منتم لوطنه .. منتج للمعرفة ..منافس عالميًا | القيم الحاكمة: النزاهة .. الإنجاز.. التكامل.. الإبداع.. الشفافية.. العمل المؤسسي
+    </div>
+  </div>
+
+  <main class="page-body">
+
+    <!-- ============================================== -->
+    <!-- المرحلة 1: بيانات الطفل والتعليمات من الوثيقة   -->
+    <!-- ============================================== -->
+    @if (currentPage() === 1) {
+      <div class="page-step-1 fade-in">
+
+        <div class="moe-card form-box">
+          <div class="section-title-line">
+            <h3 class="form-title">استمارة تسجيل بيانات ملاحظة الطفل</h3>
+          </div>
+
+          <!-- Exact Fields from Document -->
+          <div class="fields-grid">
+            <div class="field">
+              <label>اسم الطفل:</label>
+              <input 
+                type="text" 
+                placeholder="اسم الطفل..." 
+                [ngModel]="service.childProfile().childName" 
+                (ngModelChange)="service.updateProfile('childName', $event)">
+            </div>
+
+            <div class="field">
+              <label>تاريخ ميلاد الطفل:</label>
+              <input 
+                type="date" 
+                [ngModel]="service.childProfile().birthDate" 
+                (ngModelChange)="service.updateProfile('birthDate', $event)">
+            </div>
+
+            <div class="field">
+              <label>تاريخ اليوم:</label>
+              <input 
+                type="date" 
+                [ngModel]="service.childProfile().assessmentDate" 
+                (ngModelChange)="service.updateProfile('assessmentDate', $event)">
+            </div>
+
+            <div class="field">
+              <label>فترة الاختبار:</label>
+              <input 
+                type="text" 
+                placeholder="فترة الاختبار..." 
+                [ngModel]="service.childProfile().testPeriod" 
+                (ngModelChange)="service.updateProfile('testPeriod', $event)">
+            </div>
+
+            <div class="field">
+              <label>اسم الشخص الذي يكمل الاستمارة:</label>
+              <input 
+                type="text" 
+                placeholder="اسم الشخص الذي يكمل الاستمارة..." 
+                [ngModel]="service.childProfile().formFiller" 
+                (ngModelChange)="service.updateProfile('formFiller', $event)">
+            </div>
+
+            <div class="field">
+              <label>الفاحص:</label>
+              <input 
+                type="text" 
+                placeholder="اسم الفاحص..." 
+                [ngModel]="service.childProfile().examiner" 
+                (ngModelChange)="service.updateProfile('examiner', $event)">
+            </div>
+
+            <div class="field full">
+              <label>اسم الأسرة وعنوانها:</label>
+              <input 
+                type="text" 
+                placeholder="اسم الأسرة وعنوانها..." 
+                [ngModel]="service.childProfile().familyAddress" 
+                (ngModelChange)="service.updateProfile('familyAddress', $event)">
+            </div>
+          </div>
+
+          <!-- Exact Instructions Text from Document -->
+          <div class="moe-instructions-box">
+            <div class="instructions-head">
+              <strong>تعليمات قبل استخدام استمارة تسجيل بيانات ملاحظة الطفل:</strong>
+            </div>
+            <p class="instructions-p">
+              يجب مراجعة المادة التي تبدأ من صفحة 45 في هذا المجلد (المجلد الأصلي المأخوذ منه المقياس) والمادة التي تبدأ من صفحة 21 بالمجلد الثاني، حيث تناقش طرق جمع بيانات أداء الطفل وكذلك إجراءات إعطاء الدرجات على أنه يجب أن تعطى الدرجات المفردات استمارة تسجيل بيانات ملاحظة الطفل من خلال مقارنة أداء الطفل على كل مفردة بالمحك المذكور لكل مفردة. فإعطاء الدرجات للمفردات دون مقارنة أداء الطفل مع المحكات المذكورة يقضي على صدق نتائج الاختبار. توجد مفردات الاختبار ومحكاتها المصاحبة في المجلد الثاني.
+            </p>
+          </div>
+
+          <!-- Exact Scoring Key & Notes from Document -->
+          <div class="moe-scoring-guide">
+            <div class="guide-lead">
+              <strong>مفتاح الدرجات ورموز الملحوظات:</strong>
+            </div>
+
+            <!-- Scoring Key: 2, 1, 0 -->
+            <div class="guide-chips">
+              <div class="chip-item">
+                <span class="c-badge s2">2</span>
+                <span><strong>2 = يحقق المحك دائما</strong></span>
+              </div>
+              <div class="chip-item">
+                <span class="c-badge s1">1</span>
+                <span><strong>1 = يحقق المحك أحيانا</strong></span>
+              </div>
+              <div class="chip-item">
+                <span class="c-badge s0">0</span>
+                <span><strong>0 = لا يحقق المحك</strong></span>
+              </div>
+            </div>
+
+            <!-- Notes Abbreviations from Document -->
+            <div class="notes-abbr-line">
+              <span class="abbr-title">الملحوظات:</span>
+              <span class="abbr-pill"><strong>ل</strong> = ملحوظات</span>
+              <span class="abbr-pill"><strong>د</strong> = مفتاح الدرجات</span>
+              <span class="abbr-pill"><strong>س</strong> = قُدمت له مساعدة</span>
+              <span class="abbr-pill"><strong>س ع</strong> = السلوك أُعيق</span>
+              <span class="abbr-pill"><strong>خ م</strong> = اختبار مباشر</span>
+              <span class="abbr-pill"><strong>ع</strong> = تعديل/تكييف</span>
+              <span class="abbr-pill"><strong>ج</strong> = جودة الأداء</span>
+              <span class="abbr-pill"><strong>ق</strong> = تقرير</span>
+            </div>
+
+            <div class="cutoff-notice">
+              <span><strong>درجات القطع (ص):</strong> تحسب لكل مجال البنود التي بجانبها قوس وحرف <strong>(ص)</strong>.</span>
+            </div>
+          </div>
+
+          <div class="btn-center-row">
+            <button type="button" class="btn-moe-primary" (click)="setPage(2)">
+              <span>الانتقال إلى جداول الملاحظة والتقييم ➔</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- ============================================== -->
+    <!-- المرحلة 2: جداول الملاحظة والتقييم             -->
+    <!-- ============================================== -->
+    @if (currentPage() === 2) {
+      <div class="page-step-2 fade-in">
+        <!-- Official Context Bar -->
+        <div class="child-status-bar">
+          <div class="child-quick-name">
+            <div class="ribbon-student-data">
+              <strong>اسم الطفل: {{ service.childProfile().childName || '—' }}</strong>
+              <span class="small-muted">
+                تاريخ ميلاد الطفل: {{ service.childProfile().birthDate || '—' }} • 
+                تاريخ اليوم: {{ service.childProfile().assessmentDate || '—' }} • 
+                فترة الاختبار: {{ service.childProfile().testPeriod || '—' }} • 
+                الفاحص: {{ service.childProfile().examiner || '—' }}
+              </span>
+            </div>
+          </div>
+
+          <div class="status-center">
+            <span class="domain-counter-tag">
+              المجال {{ activeDomainIndex() + 1 }} من 6: <strong>{{ currentDomain().title }}</strong>
+            </span>
+          </div>
+
+          <div class="status-actions">
+            <button type="button" class="btn-moe-outline" (click)="setPage(1)">البيانات والتعليمات</button>
+            <button type="button" class="btn-moe-gold" (click)="setPage(3)">النتائج ودرجات القطع والطباعة</button>
+          </div>
+        </div>
+
+        <!-- 6 Domains Navigation Tabs -->
+        <div class="moe-domains-tabs no-print">
+          @for (dom of service.domains; track dom.id) {
+            <button 
+              type="button" 
+              class="moe-domain-tab" 
+              [class.active]="activeDomainIndex() === $index" 
+              (click)="setDomain($index)">
+              <span class="d-title">{{ getShortTitle(dom.title) }}</span>
+              <span class="d-badge">{{ service.domainCalculations()[$index].completedItems }}/{{ service.domainCalculations()[$index].totalItems }}</span>
+            </button>
+          }
+        </div>
+
+        <!-- Current Domain Questions Card -->
+        <div class="moe-card domain-questions-card">
+          <!-- Domain Header Bar -->
+          <div class="domain-card-head">
+            <div class="head-right">
+              <div>
+                <h2>{{ currentDomain().title }}</h2>
+                <span class="items-count-text">
+                  الدرجة الخام الممكنة للمجال: <strong>{{ currentDomainCalc().maxScore }}</strong>
+                </span>
+              </div>
+            </div>
+
+            <!-- Domain 5 Supplementary Tools if in Social Communication -->
+            @if (activeDomainIndex() === 4) {
+              <div class="head-left no-print">
+                <button 
+                  type="button" 
+                  class="btn-helper-form" 
+                  (click)="showObservationSheet.set(!showObservationSheet())">
+                  <span>{{ showObservationSheet() ? 'إخفاء استمارة الملاحظة' : 'عرض استمارة ملاحظة التواصل الاجتماعي' }}</span>
+                </button>
+                <button 
+                  type="button" 
+                  class="btn-helper-form" 
+                  (click)="showLanguageSummarySheet.set(!showLanguageSummarySheet())">
+                  <span>{{ showLanguageSummarySheet() ? 'إخفاء الاستمارة الموجزة' : 'عرض الاستمارة الموجزة (الجديلة ب)' }}</span>
+                </button>
+              </div>
+            }
+          </div>
+
+          <!-- Supplementary Form 1: استمارة ملاحظة التواصل الاجتماعي -->
+          @if (activeDomainIndex() === 4 && showObservationSheet()) {
+            <div class="supplementary-form-card fade-in">
+              <div class="supp-head">
+                <h4>استمارة ملاحظة التواصل الاجتماعي (المذكورة بالوثيقة)</h4>
+                <p class="supp-hint">قد يحتاج المستخدمون لعمل نسخ متعددة من هذه الاستمارة بحيث تستوعب عينة كافية من السلوك التواصلي للطفل.</p>
+              </div>
+
+              <div class="supp-grid">
+                <div class="supp-cell"><label>اسم الطفل:</label> <span>{{ service.childProfile().childName || '—' }}</span></div>
+                <div class="supp-cell"><label>الملاحظ/النشاط:</label> <input type="text" placeholder="الملاحظ أو النشاط..."></div>
+                <div class="supp-cell"><label>الحاضرون الآخرون:</label> <input type="text" placeholder="الحاضرون الآخرون..."></div>
+                <div class="supp-cell"><label>التاريخ:</label> <span>{{ service.childProfile().assessmentDate }}</span></div>
+                <div class="supp-cell"><label>وقت (البداية):</label> <input type="time"></div>
+                <div class="supp-cell"><label>وقت (التوقف):</label> <input type="time"></div>
+                <div class="supp-cell"><label>الوقت الكلي:</label> <input type="text" placeholder="الوقت الكلي..."></div>
+              </div>
+
+              <div class="supp-textarea-box">
+                <label><strong>سجل التعبيرات التي يستخدمها الطفل حرفياً:</strong></label>
+                <div class="supp-notes-guide">
+                  <span>ك غ = كلمة غير واضحة</span> • 
+                  <span>ع غ = عبارة غير واضحة</span> • 
+                  <span>السياق</span> • 
+                  <span>الوظيفة</span> • 
+                  <span>البدء</span> • 
+                  <span>الاستجابة للتعليق</span> • 
+                  <span>الاستجابة للسؤال</span> • 
+                  <span>المحاكاة</span> • 
+                  <span>غير ملائمة</span>
+                </div>
+                <textarea rows="4" placeholder="سجل التعبيرات التي يستخدمها الطفل حرفياً مع السياق والوظيفة..."></textarea>
+              </div>
+            </div>
+          }
+
+          <!-- Supplementary Form 2: الاستمارة الموجزة للتواصل الاجتماعي (الجديلة ب) -->
+          @if (activeDomainIndex() === 4 && showLanguageSummarySheet()) {
+            <div class="supplementary-form-card fade-in">
+              <div class="supp-head">
+                <h4>الاستمارة الموجزة للتواصل الاجتماعي: الجديلة (ب) إنتاج الكلمات والعبارات والجمل</h4>
+                <p class="supp-hint">
+                  راجع كل تعبيرات الطفل المسجلة في استمارة ملاحظة التواصل الاجتماعي وسجل تكرار حدوث الأنواع المحددة للكلمات وأشكال الكلمات وأنواع الجمل بإدخال شرط ماثلة في الخانات الملائمة فيما يلي. يمكن استخدام هذه المعلومات لإعطاء درجات لكل المفردات في الجديلة (ب) بمجال التواصل الاجتماعي وفقا للمحك المذكور لكل مفردة (راجع المجلد الثاني الباب الثالث).
+                </p>
+              </div>
+
+              <div class="language-examples-box">
+                <div class="lang-row"><span>يستخدم الأفعال المساعدة (مثل will و can و do و shall و have)</span></div>
+                <div class="lang-row"><span>يستخدم الفعل الرابط " يكون" to be (كأن يقول am I (أكون) أو she is (تكون) أو they are (يكونوا) )</span></div>
+                <div class="lang-row"><span>يستخدم أشكال الفعل للمفرد الغائب (كأن يقول She plays it (إنها تلعب بها) أو He does not (لم يفعل))</span></div>
+                <div class="lang-row"><span>يستخدم الأفعال غير المنتظمة للزمن الماضي (مثل went (ذهب) و drank (شرب) و ate (أكل) و made (صنع) و ran (جرى))</span></div>
+                <div class="lang-row"><span>يستخدم الأفعال المنتظمة للزمن الماضي (مثل walked (مشى) و jumped (قفز) و talked (تكلم))</span></div>
+                <div class="lang-row"><span>يستخدم لاحقة الزمن المضارع ing (مثل going (يذهب) و dancing (يرقص) و washing (يغسل))</span></div>
+                <div class="lang-row"><span>يستخدم زائدة الملكية s (مثل Mom's (تخص أمي) أو Ann's (تخص آن) أو Sammy's (تخص سامي))</span></div>
+                <div class="lang-row"><span>يستخدم أسماء الجمع غير المنتظم (مثل mice (فئران) أو leaves (أوراق الشجر) أو geese (أوز) أو feet (أقدام))</span></div>
+                <div class="lang-row"><span>يستخدم أسماء الجمع المنتظم (مثل dogs (كلاب) أو cups (أكواب) أو blocks (مكعبات) أو dresses (فساتين))</span></div>
+                <div class="lang-row"><span>يسأل أسئلة نعم/لا</span></div>
+                <div class="lang-row"><span>يسال الأسئلة بتقديم موضع الفعل المساعد (كأن يقول can I have one? هل يمكن أن آخذ واحداً؟)</span></div>
+                <div class="lang-row"><span>يسأل أسئلة "متى"</span></div>
+                <div class="lang-row"><span>يسأل أسئلة "لماذا" و"من" و"كيف"</span></div>
+                <div class="lang-row"><span>يسأل أسئلة "ماذا" و"أين"</span></div>
+                <div class="lang-row"><span>يسأل أسئلة باستخدام نبرة الصوت الصاعدة</span></div>
+                <div class="lang-row"><span>يستخدم ضمائر الفاعل (مثل I (أنا) و She (هي) و We (نحن) و You (أنت / أنتم))</span></div>
+                <div class="lang-row"><span>يستخدم ضمائر المفعول (مثل me و her و them و us)</span></div>
+                <div class="lang-row"><span>يستخدم ضمائر الملكية (مثل my, mine و hers و yours)</span></div>
+                <div class="lang-row"><span>يستخدم ضمائر التنكير (مثلاً none و all)</span></div>
+                <div class="lang-row"><span>يستخدم أسماء الإشارة (مثل this و that و these و those)</span></div>
+                <div class="lang-row"><span>يستخدم الصفات (مثل cold و red و big)</span></div>
+                <div class="lang-row"><span>يستخدم الصفات لعمل المقارنات (كأن يقول the red one is better)</span></div>
+                <div class="lang-row"><span>يستخدم الظروف (كأن يقول he is over there أو lets go fast)</span></div>
+                <div class="lang-row"><span>يستخدم حروف الجر (مثل in و on و for و at و near و through)</span></div>
+                <div class="lang-row"><span>يستخدم الروابط (مثل and و so و only و if)</span></div>
+                <div class="lang-row"><span>يستخدم أدوات التعريف والتنكير (مثل the و a و an)</span></div>
+              </div>
+            </div>
+          }
+
+          <!-- Questions Table List -->
+          <div class="questions-wrapper">
+            @for (strand of currentDomain().strands; track strand.title) {
+              <div class="strand-title-line">
+                <span>{{ strand.title }}</span>
+              </div>
+
+              <div class="questions-list">
+                @for (item of strand.items; track item.id) {
+                  <div class="question-card" [class.is-cutoff-card]="item.isCutoff" [class.is-evaluated]="getScore(item.id) !== null">
+                    <!-- Top: Question Header -->
+                    <div class="q-card-header">
+                      <div class="q-title-group">
+                        <span class="q-item-num">{{ getItemIndex(item.id) }}</span>
+                        <h4 class="q-item-text">{{ item.text }}</h4>
+                      </div>
+                      @if (item.isCutoff) {
+                        <span class="q-cutoff-badge" title="محك أساسي لحساب درجات القطع (ص)">
+                          <span class="badge-star">★</span>
+                          <span>محك درجة قطع (ص)</span>
+                        </span>
+                      }
+                    </div>
+
+                    <!-- Middle: Scoring Zone (د: 0, 1, 2) -->
+                    <div class="q-scoring-zone">
+                      <div class="zone-label-wrap">
+                        <span class="zone-badge">د</span>
+                        <strong class="zone-label">مفتاح الدرجات:</strong>
+                      </div>
+                      <div class="score-pills-row">
+                        <button 
+                          type="button" 
+                          class="score-pill opt-0" 
+                          [class.active]="getScore(item.id) === 0" 
+                          (click)="setScore(item.id, 0)">
+                          <span class="score-num">0</span>
+                          <span class="score-txt">لا يحقق المحك</span>
+                        </button>
+
+                        <button 
+                          type="button" 
+                          class="score-pill opt-1" 
+                          [class.active]="getScore(item.id) === 1" 
+                          (click)="setScore(item.id, 1)">
+                          <span class="score-num">1</span>
+                          <span class="score-txt">يحقق المحك أحياناً</span>
+                        </button>
+
+                        <button 
+                          type="button" 
+                          class="score-pill opt-2" 
+                          [class.active]="getScore(item.id) === 2" 
+                          (click)="setScore(item.id, 2)">
+                          <span class="score-num">2</span>
+                          <span class="score-txt">يحقق المحك دائماً</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- Bottom: Notes Zone (ل: رموز الملحوظات) -->
+                    <div class="q-notes-zone">
+                      <div class="notes-header-flex">
+                        <div class="zone-label-wrap">
+                          <span class="zone-badge badge-note">ل</span>
+                          <strong class="zone-label">الملحوظات:</strong>
+                        </div>
+                        <span class="notes-hint">(اختر الرمز المناسب للمعلمة إن وُجد، أو اكتب ملحوظة تفصيلية)</span>
+                      </div>
+
+                      <div class="notes-symbols-row">
+                        @for (n of service.noteSymbols; track n.code) {
+                          <button 
+                            type="button" 
+                            class="symbol-chip" 
+                            [class.active]="service.evaluations()[item.id]?.noteSymbol === n.code"
+                            (click)="service.setNoteSymbol(item.id, n.code)"
+                            [title]="n.code + ' : ' + n.label">
+                            <strong class="sym-code">{{ n.code }}</strong>
+                            <span class="sym-text">{{ n.shortLabel }}</span>
+                          </button>
+                        }
+                      </div>
+
+                      <div class="custom-note-wrap">
+                        <input 
+                          type="text" 
+                          class="custom-note-input"
+                          placeholder="ملحوظة تفصيلية إضافية للمعلمة..." 
+                          [ngModel]="getNote(item.id)" 
+                          (ngModelChange)="setNote(item.id, $event)">
+                      </div>
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+
+          <!-- Bottom Domain Results (Exact table from document at end of each domain) -->
+          <div class="domain-doc-footer-table">
+            <h4 class="doc-table-heading">النتائج ({{ currentDomain().title }}):</h4>
+            <div class="doc-calc-grid">
+              <div class="doc-calc-cell">
+                <span class="d-label">التاريخ:</span>
+                <strong>{{ service.childProfile().assessmentDate }}</strong>
+              </div>
+              <div class="doc-calc-cell primary-cell">
+                <span class="d-label">الدرجة الخام للمجال:</span>
+                <strong class="d-val">{{ currentDomainCalc().totalScore }}</strong>
+              </div>
+              <div class="doc-calc-cell">
+                <span class="d-label">الدرجة الخام الممكنة للمجال:</span>
+                <strong class="d-val">{{ currentDomainCalc().maxScore }}</strong>
+              </div>
+              <div class="doc-calc-cell success-cell">
+                <span class="d-label">النسبة المئوية للمجال:</span>
+                <strong class="d-val">{{ currentDomainCalc().percentage }}%</strong>
+              </div>
+              <div class="doc-calc-cell gold-cell">
+                <span class="d-label">درجات القطع (ص):</span>
+                <strong class="d-val">{{ currentDomainCalc().cutoffScore }} / {{ currentDomainCalc().cutoffMaxScore }} ({{ currentDomainCalc().cutoffPercentage }}%)</strong>
+              </div>
+            </div>
+
+            <!-- Examiner & Comments from Document -->
+            <div class="doc-comments-row">
+              <div class="doc-comm-field">
+                <label>الفاحص: <strong>{{ service.childProfile().examiner || '—' }}</strong></label>
+              </div>
+              <div class="doc-comm-field">
+                <label>التاريخ: <strong>{{ service.childProfile().assessmentDate || '—' }}</strong></label>
+              </div>
+              <div class="doc-comm-field full">
+                <label>تعليقات:</label>
+                <textarea rows="2" placeholder="تعليقات..."></textarea>
+              </div>
+            </div>
+
+            <!-- Bottom Navigation Bar for this Domain -->
+            <div class="domain-bottom-bar no-print">
+              <button 
+                type="button" 
+                class="btn-nav btn-prev" 
+                [disabled]="activeDomainIndex() === 0" 
+                (click)="prevDomain()">
+                <span>‹</span>
+                <span>المجال السابق</span>
+              </button>
+
+              <button 
+                type="button" 
+                class="btn-nav btn-next" 
+                (click)="nextDomain()">
+                <span>{{ activeDomainIndex() === 5 ? 'عرض النتائج ودرجات القطع والطباعة ➔' : 'المجال التالي ➔' }}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- ============================================== -->
+    <!-- المرحلة 3: النتائج وحساب درجات القطع والطباعة   -->
+    <!-- ============================================== -->
+    @if (currentPage() === 3) {
+      <div class="page-step-3 fade-in">
+        <!-- Results Hero Card -->
+        <div class="moe-card result-hero">
+          <div class="hero-top">
+            <div class="hero-child-title">
+              <span class="moe-pill-tag">النتائج</span>
+              <h2>استمارة تسجيل بيانات ملاحظة الطفل - النتائج</h2>
+              <p>اسم الطفل: <strong>{{ service.childProfile().childName || '—' }}</strong> • تاريخ ميلاد الطفل: {{ service.childProfile().birthDate || '—' }} • تاريخ اليوم: {{ service.childProfile().assessmentDate || '—' }} • فترة الاختبار: {{ service.childProfile().testPeriod || '—' }} • الفاحص: {{ service.childProfile().examiner || '—' }}</p>
+            </div>
+            <div class="hero-actions-btns no-print">
+              <!-- Required Print Icon -->
+              <button type="button" class="btn-print-action" (click)="printReport()" title="طباعة الاستمارة الرسمية والنتائج">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+                  <path d="M6 14h12v8H6z"/>
+                </svg>
+                <span>طباعة الاستمارة</span>
+              </button>
+              <button type="button" class="btn-edit-eval" (click)="setPage(2)">
+                <span>تعديل الدرجات</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Total Summary Cards -->
+          <div class="three-score-cards">
+            <div class="score-card c-green">
+              <span class="sc-label">الدرجة الخام للمقياس</span>
+              <strong class="sc-number">{{ service.overallTotals().totalScore }}</strong>
+              <span class="sc-sub">الدرجة الخام الممكنة للمقياس: {{ service.overallTotals().maxScore }}</span>
+            </div>
+
+            <div class="score-card c-teal">
+              <span class="sc-label">النسبة المئوية للمقياس</span>
+              <strong class="sc-number">{{ service.overallTotals().percentage }}%</strong>
+              <span class="sc-sub">النسبة المئوية الإجمالية</span>
+            </div>
+
+            <div class="score-card c-gold">
+              <span class="sc-label">مجموع درجات القطع (ص)</span>
+              <strong class="sc-number">{{ service.overallTotals().cutoffScore }} / {{ service.overallTotals().cutoffMaxScore }}</strong>
+              <span class="sc-sub">نسبة درجات القطع: {{ service.overallTotals().cutoffPercentage }}%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- DEDICATED CUTOFF SCORES SECTION (أيقونة وحساب درجات القطع ص لكل مجال) -->
+        <div class="moe-card cutoff-table-card">
+          <div class="card-head-simple">
+            <div>
+              <h3>حساب درجات القطع (ص) لكل مجال:</h3>
+              <p>يحسب كل مجال البنود المحددة بحرف <strong>(ص)</strong> في الاستمارة الرسمية:</p>
+            </div>
+          </div>
+
+          <table class="moe-clean-table">
+            <thead>
+              <tr>
+                <th>المجال</th>
+                <th style="text-align: center;">درجة القطع المحققة (ص)</th>
+                <th style="text-align: center;">الدرجة العظمى لبنود القطع (ص)</th>
+                <th style="text-align: center;">النسبة المئوية لدرجات القطع (ص)</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (calc of service.domainCalculations(); track calc.domainId) {
+                <tr>
+                  <td>
+                    <strong>{{ calc.domainTitle }}</strong>
+                  </td>
+                  <td style="text-align: center; font-weight: bold; color: #b45309;">
+                    {{ calc.cutoffScore }}
+                  </td>
+                  <td style="text-align: center; color: #64748b;">
+                    {{ calc.cutoffMaxScore }}
+                  </td>
+                  <td style="text-align: center; font-weight: bold;">
+                    {{ calc.cutoffPercentage }}%
+                  </td>
+                </tr>
+              }
+            </tbody>
+            <tfoot>
+              <tr class="total-row">
+                <td>المجموع الإجمالي لدرجات القطع (ص):</td>
+                <td style="text-align: center; font-weight: bold; color: #b45309;">{{ service.overallTotals().cutoffScore }}</td>
+                <td style="text-align: center;">{{ service.overallTotals().cutoffMaxScore }}</td>
+                <td style="text-align: center; font-weight: bold;">{{ service.overallTotals().cutoffPercentage }}%</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+
+        <!-- Full 6 Domains Summary Table Matching Document End-Calculations -->
+        <div class="moe-card">
+          <div class="card-head-simple">
+            <div>
+              <h3>جدول النتائج لجميع المجالات:</h3>
+            </div>
+          </div>
+
+          <table class="moe-clean-table">
+            <thead>
+              <tr>
+                <th>المجال</th>
+                <th style="text-align: center;">الدرجة الخام للمجال</th>
+                <th style="text-align: center;">الدرجة الخام الممكنة للمجال</th>
+                <th style="text-align: center;">النسبة المئوية للمجال</th>
+                <th style="text-align: center;">درجات القطع (ص)</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (calc of service.domainCalculations(); track calc.domainId) {
+                <tr>
+                  <td>
+                    <strong>{{ calc.domainTitle }}</strong>
+                  </td>
+                  <td style="text-align: center; font-weight: bold;">{{ calc.totalScore }}</td>
+                  <td style="text-align: center; color: #64748b;">{{ calc.maxScore }}</td>
+                  <td style="text-align: center; font-weight: bold; color: #1b8354;">{{ calc.percentage }}%</td>
+                  <td style="text-align: center; font-weight: bold; color: #b45309;">{{ calc.cutoffScore }} / {{ calc.cutoffMaxScore }}</td>
+                </tr>
+              }
+            </tbody>
+            <tfoot>
+              <tr class="total-row">
+                <td>المجموع الكلي:</td>
+                <td style="text-align: center;">{{ service.overallTotals().totalScore }}</td>
+                <td style="text-align: center;">{{ service.overallTotals().maxScore }}</td>
+                <td style="text-align: center; color: #1b8354;">{{ service.overallTotals().percentage }}%</td>
+                <td style="text-align: center; color: #b45309;">{{ service.overallTotals().cutoffScore }} / {{ service.overallTotals().cutoffMaxScore }}</td>
+              </tr>
+            </tfoot>
+          </table>
+
+          <!-- Comments & Signatures from Document -->
+          <div class="notes-and-sigs">
+            <div class="notes-area">
+              <label>تعليقات:</label>
+              <textarea rows="3" placeholder="تعليقات..."></textarea>
+            </div>
+
+            <div class="sigs-flex">
+              <div>
+                <span>الفاحص:</span><br>
+                <strong>{{ service.childProfile().examiner || '................................' }}</strong>
+              </div>
+              <div>
+                <span>اسم الشخص الذي يكمل الاستمارة:</span><br>
+                <strong>{{ service.childProfile().formFiller || '................................' }}</strong>
+              </div>
+              <div>
+                <span>التاريخ:</span><br>
+                <strong>{{ service.childProfile().assessmentDate }}</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Actions -->
+        <div class="bottom-btns-center no-print">
+          <button type="button" class="btn-moe-primary" (click)="printReport()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+              <path d="M6 14h12v8H6z"/>
+            </svg>
+            <span>طباعة الاستمارة الرسمية</span>
+          </button>
+        </div>
+      </div>
+    }
+
+    <!-- Full Printable Tables (Rendered when printing) -->
+    <div class="print-tables-all print-only">
+      <h3 style="margin: 15px 0 8px 0; border-bottom: 2px solid #000; padding-bottom: 4px;">
+        جداول الاستمارة التفصيلية:
+      </h3>
+      @for (dom of service.domains; track dom.id) {
+        <div class="print-one-domain">
+          <h4>{{ dom.title }}</h4>
+          @for (strand of dom.strands; track strand.title) {
+            <p style="font-weight: bold; margin: 4px 0;">{{ strand.title }}</p>
+            <table class="print-simple-table">
+              <thead>
+                <tr>
+                  <th style="width: 30px;">#</th>
+                  <th>المفردة / المحك</th>
+                  <th style="width: 60px; text-align: center;">د</th>
+                  <th style="width: 140px;">ل</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of strand.items; track item.id) {
+                  <tr>
+                    <td style="text-align: center;">{{ $index + 1 }}</td>
+                    <td>
+                      {{ item.text }}
+                      @if (item.isCutoff) { <strong>(ص)</strong> }
+                    </td>
+                    <td style="text-align: center; font-weight: bold;">
+                      {{ getScore(item.id) !== null ? getScore(item.id) : '-' }}
+                    </td>
+                    <td>
+                      {{ service.evaluations()[item.id]?.noteSymbol || '' }} 
+                      {{ getNote(item.id) }}
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          }
+          <div style="background: #f1f5f9; padding: 4px; font-size: 9pt; margin-bottom: 10px; display: flex; justify-content: space-between;">
+            <span>الدرجة الخام للمجال: {{ service.domainCalculations()[$index].totalScore }} / {{ service.domainCalculations()[$index].maxScore }}</span>
+            <span>النسبة المئوية للمجال: {{ service.domainCalculations()[$index].percentage }}%</span>
+            <span>درجات القطع (ص): {{ service.domainCalculations()[$index].cutoffScore }} / {{ service.domainCalculations()[$index].cutoffMaxScore }}</span>
+          </div>
+        </div>
+      }
+    </div>
+  </main>
+</div>

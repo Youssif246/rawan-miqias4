@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>استعراض نظام استمارة تسجيل بيانات ملاحظة الطفل | وزارة التعليم</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'IBM Plex Sans Arabic', sans-serif;
+      background: #f1f5f9;
+      color: #0f172a;
+      line-height: 1.6;
+      padding: 2.5rem 1rem;
+    }
+    .player-card {
+      max-width: 1040px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 12px 36px rgba(15, 77, 49, 0.15);
+      overflow: hidden;
+      border: 1px solid #cbd5e1;
+    }
+    .header-bar {
+      background: #0f4d31;
+      color: #ffffff;
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 4px solid #c89326;
+    }
+    .header-title h1 {
+      font-size: 1.35rem;
+      font-weight: 800;
+      margin-bottom: 0.35rem;
+    }
+    .header-title p {
+      font-size: 0.9rem;
+      color: #a7f3d0;
+    }
+    .badge-gov {
+      background: #c89326;
+      color: #ffffff;
+      padding: 6px 16px;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+    }
+    .video-viewport {
+      background: #092c1c;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      border-bottom: 1px solid #cbd5e1;
+      padding: 1rem;
+    }
+    .video-viewport img {
+      width: 100%;
+      height: auto;
+      max-height: 680px;
+      object-fit: contain;
+      display: block;
+      border-radius: 8px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+    }
+    .controls-bar {
+      background: #f8fafc;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .status-text {
+      font-size: 0.92rem;
+      color: #0f4d31;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .live-dot {
+      width: 10px;
+      height: 10px;
+      background: #10b981;
+      border-radius: 50%;
+      display: inline-block;
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+    }
+    .btn-action {
+      background: #0f4d31;
+      color: #ffffff;
+      border: none;
+      padding: 0.65rem 1.6rem;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 0.92rem;
+      font-weight: 800;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 8px rgba(15, 77, 49, 0.25);
+    }
+    .btn-action:hover {
+      background: #1b8354;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(15, 77, 49, 0.35);
+    }
+    .features-section {
+      padding: 2.25rem 2rem;
+    }
+    .features-section h2 {
+      font-size: 1.25rem;
+      color: #0f4d31;
+      margin-bottom: 1.25rem;
+      font-weight: 800;
+      border-bottom: 2px solid #edf7f2;
+      padding-bottom: 0.6rem;
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.25rem;
+    }
+    .f-item {
+      background: #f8fafc;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 1.25rem;
+      border-top: 3px solid #1b8354;
+      transition: all 0.2s ease;
+    }
+    .f-item:hover {
+      border-color: #0f4d31;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    .f-item strong {
+      color: #0f4d31;
+      display: block;
+      margin-bottom: 0.4rem;
+      font-size: 1rem;
+    }
+    .f-item p {
+      font-size: 0.88rem;
+      color: #334155;
+      line-height: 1.7;
+    }
+  </style>
+</head>
+<body>
+  <div class="player-card">
+    <div class="header-bar">
+      <div class="header-title">
+        <h1>استعراض نظام استمارة تسجيل بيانات ملاحظة الطفل</h1>
+        <p>المملكة العربية السعودية • وزارة التعليم • مقياس AEPS الرسمي المعتمد</p>
+      </div>
+      <span class="badge-gov">عرض تجربة النظام للعميلة</span>
+    </div>
+
+    <div class="video-viewport">
+      <img src="data:image/webp;base64,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" alt="فيديو استعراض النظام التفاعلي">
+    </div>
+
+    <div class="controls-bar">
+      <span class="status-text">
+        <span class="live-dot"></span>
+        <span>الفيديو التوضيحي يعمل تلقائياً وبشكل متكرر لشرح كافة وظائف المنصة</span>
+      </span>
+      <a href="فيديو_تجربة_الموقع.webp" download="فيديو_تجربة_مقياس_AEPS.webp" class="btn-action">
+        <span>تحميل ملف الفيديو المباشر</span>
+      </a>
+    </div>
+
+    <div class="features-section">
+      <h2>أبرز مميزات المنصة المنجزة لتقديمها للعميلة:</h2>
+      <div class="features-grid">
+        <div class="f-item">
+          <strong>1. الهوية البصرية الرسمية لوزارة التعليم 2025</strong>
+          <p>تطبيق الشعار الرسمي للوزارة، الألوان الملكية (الأخضر الداكن والزمردي والذهبي)، مع شريط الرؤية والقيم الحاكمة نصاً كما بالوثيقة.</p>
+        </div>
+        <div class="f-item">
+          <strong>2. مطابقة وثيقة مقياس AEPS بنسبة 100%</strong>
+          <p>تضمين كافة الـ 241 بنداً رسمياً عبر المجالات الستة والجدائل، دون أي تأليف أو اختراع لبنود غير موجودة بالوثيقة.</p>
+        </div>
+        <div class="f-item">
+          <strong>3. الاحتساب التلقائي لمحكات درجات القطع (ص)</strong>
+          <p>التعرف التلقائي على بنود محكات القطع وتمييزها بشارة ونجمة ذهبية، مع جدول تفصيلي ختامي يحسب الدرجة المحققة والنسبة بدقة.</p>
+        </div>
+        <div class="f-item">
+          <strong>4. تقييم سريع واحترافي للمعلمة (د / ل)</strong>
+          <p>مفاتيح درجات بنظام ألوان معتمد (0، 1، 2)، مع 6 اختصارات سريعة للملحوظات (س، س ع، خ م، ع، ج، ق) وحقل نصي مخصص.</p>
+        </div>
+        <div class="f-item">
+          <strong>5. استمارات الملاحظة التكميلية الرسمية</strong>
+          <p>استمارة ملاحظة التواصل الاجتماعي الحرفية والاستمارة الموجزة (الجديلة ب) لإنتاج الكلمات والجمل في بيئة الأطفال.</p>
+        </div>
+        <div class="f-item">
+          <strong>6. الطباعة الرسمية الحكومية الفورية</strong>
+          <p>أمر طباعة فوري بنقرة واحدة يخفي أدوات التحكم ويحول الصفحة لنموذج حكومي معتمد جاهز للتوقيع والاعتماد والختم.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
