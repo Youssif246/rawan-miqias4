@@ -14,11 +14,35 @@ import { AssessmentItem } from './models/assessment.model';
 export class App {
   readonly service = inject(AssessmentService);
 
-  // 3 Official Stages:
-  // 1: بيانات الطفل والتعليمات
-  // 2: جداول الملاحظة والتقييم
-  // 3: النتائج ودرجات القطع والطباعة
+  // 3 Official Stages (بيانات الطفل والتعليمات، جداول الملاحظة والتقييم، استمارة درجات القطع والأهلية):
   readonly currentPage = signal<1 | 2 | 3>(1);
+  readonly printMode = signal<'all' | 'cutoff-only'>('all');
+
+  // Age preset benchmarks for AEPS cutoff scores
+  readonly ageBracketPresets = [
+    { label: 'شريحة 60 - 71 شهراً (5 إلى 6 سنوات)', values: { domain_1: 6.5, domain_2: 8, domain_3: 9.5, domain_4: 22, domain_6: 16.5 } },
+    { label: 'شريحة 48 - 59 شهراً (4 إلى 5 سنوات)', values: { domain_1: 5.5, domain_2: 7, domain_3: 8, domain_4: 18, domain_6: 14 } },
+    { label: 'شريحة 36 - 47 شهراً (3 إلى 4 سنوات)', values: { domain_1: 4.5, domain_2: 5.5, domain_3: 6.5, domain_4: 14, domain_6: 11 } }
+  ];
+
+  applyAgePreset(preset: typeof this.ageBracketPresets[0]) {
+    for (const [domId, val] of Object.entries(preset.values)) {
+      this.service.updateBenchmark(domId, val);
+    }
+  }
+
+  getEffectiveAgeMonths(): string {
+    const custom = this.service.eligibilityForm().ageInMonths;
+    if (custom && custom.trim().length > 0) return custom;
+    const birth = this.service.childProfile().birthDate;
+    if (!birth) return '٧١ شهراً';
+    const bDate = new Date(birth);
+    const now = new Date(this.service.childProfile().assessmentDate || new Date());
+    if (isNaN(bDate.getTime())) return '٧١ شهراً';
+    let months = (now.getFullYear() - bDate.getFullYear()) * 12 + (now.getMonth() - bDate.getMonth());
+    if (now.getDate() < bDate.getDate()) months--;
+    return months > 0 ? `${months} شهراً` : '٧١ شهراً';
+  }
 
   // Active domain in page 2 (0 to 5)
   readonly activeDomainIndex = signal<number>(0);
@@ -65,8 +89,6 @@ export class App {
   nextDomain() {
     if (this.activeDomainIndex() < this.service.domains.length - 1) {
       this.setDomain(this.activeDomainIndex() + 1);
-    } else {
-      this.setPage(3);
     }
   }
 
@@ -129,7 +151,10 @@ export class App {
     }
   }
 
-  printReport() {
-    window.print();
+  printReport(mode: 'all' | 'cutoff-only' = 'all') {
+    this.printMode.set(mode);
+    setTimeout(() => {
+      window.print();
+    }, 50);
   }
 }

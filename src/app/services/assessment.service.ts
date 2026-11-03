@@ -4,7 +4,8 @@ import {
   AssessmentItem,
   ChildProfile,
   ItemEvaluation,
-  DomainCalculation
+  DomainCalculation,
+  EligibilityFormData
 } from '../models/assessment.model';
 import { ASSESSMENT_DOMAINS } from '../data/assessment-domains';
 
@@ -33,6 +34,69 @@ export class AssessmentService {
 
   // Fast item lookup map
   readonly itemMap = new Map<string, AssessmentItem>();
+
+  // Official Standard Report Text for Early Intervention Eligibility
+  readonly DEFAULT_REPORT_TEXT =
+    'تكشف هذه المقارنات أن درجات الأهداف العامة للمجالات للطفل أدنى من درجات القطع في كل المجالات النمائية الخمس التي يقيمها اختبار نظام القياس والتقويم والبرمجة ومن المرجح جداً أن يكون أداؤه أدنى بصورة ملحوظة من أقرانه في العمر الزمني ولذلك يستحق تلقي خدمات التدخل المبكر';
+
+  // 5 Standard Developmental Domains for Cutoff Eligibility Report
+  readonly eligibilityDomainDefs = [
+    { domainId: 'domain_1', title: 'مجال الحركات الدقيقة', defaultBenchmark: 6.5 },
+    { domainId: 'domain_2', title: 'مجال الحركات الكبيرة', defaultBenchmark: 8 },
+    { domainId: 'domain_3', title: 'المجال التكيفي', defaultBenchmark: 9.5 },
+    { domainId: 'domain_4', title: 'المجال المعرفي', defaultBenchmark: 22 },
+    { domainId: 'domain_6', title: 'المجال الاجتماعي', defaultBenchmark: 16.5 }
+  ];
+
+  // Eligibility / Cutoff Form State
+  readonly eligibilityForm = signal<EligibilityFormData>({
+    ageInMonths: '',
+    observationStartDate: '',
+    observationEndDate: '',
+    benchmarks: {
+      'domain_1': 6.5,
+      'domain_2': 8,
+      'domain_3': 9.5,
+      'domain_4': 22,
+      'domain_6': 16.5
+    },
+    customChildScores: {},
+    customNotes: {},
+    needsIntervention: true,
+    reportText: this.DEFAULT_REPORT_TEXT
+  });
+
+  // Comparison between Child's Goal Scores and Age Benchmark Cutoff Scores
+  readonly eligibilityComparison = computed(() => {
+    const form = this.eligibilityForm();
+    const domainCalcs = this.domainCalculations();
+
+    return this.eligibilityDomainDefs.map(def => {
+      // Automatic cutoff score computed from observation tables:
+      const dCalc = domainCalcs.find(c => c.domainId === def.domainId);
+      const autoScore = dCalc ? dCalc.cutoffScore : 0;
+
+      const customScore = form.customChildScores[def.domainId];
+      const childScore = customScore !== undefined && customScore !== null ? customScore : autoScore;
+
+      const benchmarkScore = form.benchmarks[def.domainId] ?? def.defaultBenchmark;
+      const isUnderCutoff = childScore < benchmarkScore;
+
+      const defaultNote = isUnderCutoff ? 'تدخل مبكر' : 'ضمن النطاق الملائم';
+      const note = form.customNotes[def.domainId] !== undefined ? form.customNotes[def.domainId] : defaultNote;
+
+      return {
+        domainId: def.domainId,
+        title: def.title,
+        childScore,
+        autoScore,
+        isCustomScore: customScore !== undefined && customScore !== null,
+        benchmarkScore,
+        isUnderCutoff,
+        note
+      };
+    });
+  });
 
   constructor() {
     for (const domain of this.domains) {
@@ -198,17 +262,33 @@ export class AssessmentService {
 
     // If no sub-items are answered at all, reset parent score to null
     if (answeredScores.length === 0) {
-      evals[parentItemId] = {
-        ...parentCurrent,
-        score: null,
-        isAutoCalculated: false
-      };
+      if (parentCurrent.isAutoCalculated) {
+        evals[parentItemId] = {
+          ...parentCurrent,
+          score: null,
+          isAutoCalculated: false
+        };
+      }
       return;
     }
 
+    // STRICT REQUIREMENT:
+    // Only calculate when ALL sub-items have been answered!
+    // If some sub-items are still unanswered, DO NOT prematurely assign a score to the parent!
     const allAnswered = answeredScores.length === subItemIds.length;
-    const allAreTwo = allAnswered && answeredScores.every(s => s === 2);
-    const allAreZero = allAnswered && answeredScores.every(s => s === 0);
+    if (!allAnswered) {
+      if (parentCurrent.isAutoCalculated) {
+        evals[parentItemId] = {
+          ...parentCurrent,
+          score: null,
+          isAutoCalculated: false
+        };
+      }
+      return;
+    }
+
+    const allAreTwo = answeredScores.every(s => s === 2);
+    const allAreZero = answeredScores.every(s => s === 0);
 
     let calculatedScore: number;
 
@@ -218,27 +298,9 @@ export class AssessmentService {
     } else if (allAreZero) {
       // إذا حصلت جميع البنود الفرعية التابعة له على درجة (0)، يتم تلقائياً تعيين درجة البند الرئيسي (ص) = 0.
       calculatedScore = 0;
-    } else if (allAnswered) {
+    } else {
       // في حال وجود تفاوت أو اختلاف في الدرجات الفرعية (مزيج بين 1 و 2، أو 0 و 1، أو لم تكن كلها متطابقة 2 أو كلها 0)، يتم تعيين درجة البند الرئيسي (ص) = 1.
       calculatedScore = 1;
-    } else {
-      // Partial evaluation (some answered, some not yet answered):
-      const has2 = answeredScores.includes(2);
-      const has0 = answeredScores.includes(0);
-      const has1 = answeredScores.includes(1);
-
-      if (has1 || (has2 && has0)) {
-        // Any variation or score of 1 means it cannot be all 2 or all 0
-        calculatedScore = 1;
-      } else if (answeredScores.every(s => s === 2)) {
-        // All answered so far are 2
-        calculatedScore = 2;
-      } else if (answeredScores.every(s => s === 0)) {
-        // All answered so far are 0
-        calculatedScore = 0;
-      } else {
-        calculatedScore = 1;
-      }
     }
 
     evals[parentItemId] = {
@@ -283,6 +345,50 @@ export class AssessmentService {
     });
   }
 
+  updateEligibilityField<K extends keyof EligibilityFormData>(field: K, value: EligibilityFormData[K]) {
+    this.eligibilityForm.update(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  }
+
+  updateBenchmark(domainId: string, value: number) {
+    this.eligibilityForm.update(prev => ({
+      ...prev,
+      benchmarks: {
+        ...prev.benchmarks,
+        [domainId]: value
+      }
+    }));
+  }
+
+  updateCustomChildScore(domainId: string, value: number | null) {
+    this.eligibilityForm.update(prev => ({
+      ...prev,
+      customChildScores: {
+        ...prev.customChildScores,
+        [domainId]: value
+      }
+    }));
+  }
+
+  updateCustomNote(domainId: string, value: string) {
+    this.eligibilityForm.update(prev => ({
+      ...prev,
+      customNotes: {
+        ...prev.customNotes,
+        [domainId]: value
+      }
+    }));
+  }
+
+  resetReportText() {
+    this.eligibilityForm.update(prev => ({
+      ...prev,
+      reportText: this.DEFAULT_REPORT_TEXT
+    }));
+  }
+
   resetAll() {
     this.evaluations.set({});
     this.childProfile.set({
@@ -293,6 +399,22 @@ export class AssessmentService {
       formFiller: '',
       testPeriod: 'الفترة الأولى',
       notes: ''
+    });
+    this.eligibilityForm.set({
+      ageInMonths: '',
+      observationStartDate: '',
+      observationEndDate: '',
+      benchmarks: {
+        'domain_1': 6.5,
+        'domain_2': 8,
+        'domain_3': 9.5,
+        'domain_4': 22,
+        'domain_6': 16.5
+      },
+      customChildScores: {},
+      customNotes: {},
+      needsIntervention: true,
+      reportText: this.DEFAULT_REPORT_TEXT
     });
     this.activeDomainId.set(this.domains[0]?.id || '');
     this.activeView.set('assessment');

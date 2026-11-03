@@ -55,3 +55,14 @@ export interface DomainCalculation {
   completedItems: number;
   totalItems: number;
 }
+
+export interface EligibilityFormData {
+  ageInMonths: string; // العمر الزمني للطفل بالأشهر
+  observationStartDate: string; // تاريخ بدء الملاحظة
+  observationEndDate: string; // تاريخ الانتهاء من الملاحظة
+  benchmarks: Record<string, number>; // درجات القطع للشريحة العمرية لكل مجال
+  customChildScores: Record<string, number | null>; // درجات الطفل المعدلة يدوياً إن رغب
+  customNotes: Record<string, string>; // الملاحظات لكل مجال
+  needsIntervention: boolean; // هل يحتاج الطفل إلى خدمات التدخل المبكر
+  reportText: string; // نص التقرير
+}
