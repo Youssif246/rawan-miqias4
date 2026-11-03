@@ -15,7 +15,6 @@ import { ASSESSMENT_DOMAINS } from '../data/assessment-domains';
 export class AssessmentService {
   readonly domains: AssessmentDomain[] = ASSESSMENT_DOMAINS;
 
-  readonly activeView = signal<'assessment' | 'cutoff' | 'summary'>('assessment');
   readonly activeDomainId = signal<string>(this.domains[0]?.id || '');
 
   // Exact profile fields with duplicate examiner removed:
@@ -184,30 +183,6 @@ export class AssessmentService {
     });
   });
 
-  // Overall Totals across all 6 domains
-  readonly overallTotals = computed(() => {
-    const calcs = this.domainCalculations();
-    const totalScore = calcs.reduce((acc, c) => acc + c.totalScore, 0);
-    const maxScore = calcs.reduce((acc, c) => acc + c.maxScore, 0);
-    const cutoffScore = calcs.reduce((acc, c) => acc + c.cutoffScore, 0);
-    const cutoffMaxScore = calcs.reduce((acc, c) => acc + c.cutoffMaxScore, 0);
-    const completedItems = calcs.reduce((acc, c) => acc + c.completedItems, 0);
-    const totalItems = calcs.reduce((acc, c) => acc + c.totalItems, 0);
-    const percentage = maxScore > 0 ? Math.round((totalScore / maxScore) * 100) : 0;
-    const cutoffPercentage = cutoffMaxScore > 0 ? Math.round((cutoffScore / cutoffMaxScore) * 100) : 0;
-
-    return {
-      totalScore,
-      maxScore,
-      cutoffScore,
-      cutoffMaxScore,
-      completedItems,
-      totalItems,
-      percentage,
-      cutoffPercentage
-    };
-  });
-
   updateProfile(field: keyof ChildProfile, value: string) {
     this.childProfile.update(prev => ({
       ...prev,
@@ -247,18 +222,26 @@ export class AssessmentService {
 
   /**
    * Recalculates the parent (ص) item score based on all its sub-items
+   * Applies strictly to cutoff goals with MULTIPLE sub-items (such as 2.1 and 2.2)
    */
   private updateParentCutoffScore(parentItemId: string, evals: Record<string, ItemEvaluation>) {
     const parentItem = this.itemMap.get(parentItemId);
-    if (!parentItem || !parentItem.subItemIds || parentItem.subItemIds.length === 0) {
+    // Must have at least 2 sub-items (مثل 2.1 و 2.2).
+    // A single sub-item (such as 1.1) is an independent item and must never lock the parent item!
+    if (!parentItem || !parentItem.subItemIds || parentItem.subItemIds.length < 2) {
+      return;
+    }
+
+    const parentCurrent = evals[parentItemId] || { score: null };
+
+    // If the evaluator manually scored this parent item directly, do not overwrite their manual choice!
+    if (parentCurrent.score !== null && !parentCurrent.isAutoCalculated) {
       return;
     }
 
     const subItemIds = parentItem.subItemIds;
     const subScores = subItemIds.map(id => evals[id]?.score);
     const answeredScores = subScores.filter((s): s is number => s !== null && s !== undefined);
-
-    const parentCurrent = evals[parentItemId] || { score: null };
 
     // If no sub-items are answered at all, reset parent score to null
     if (answeredScores.length === 0) {
@@ -328,20 +311,6 @@ export class AssessmentService {
         ...prev,
         [itemId]: { ...current, customNote }
       };
-    });
-  }
-
-  quickFillDomain(domainId: string, score: number) {
-    const domain = this.domains.find(d => d.id === domainId);
-    if (!domain) return;
-    this.evaluations.update(prev => {
-      const next = { ...prev };
-      domain.strands.forEach(s => {
-        s.items.forEach(item => {
-          next[item.id] = { ...(next[item.id] || {}), score, isAutoCalculated: item.isCutoff };
-        });
-      });
-      return next;
     });
   }
 
@@ -417,10 +386,5 @@ export class AssessmentService {
       reportText: this.DEFAULT_REPORT_TEXT
     });
     this.activeDomainId.set(this.domains[0]?.id || '');
-    this.activeView.set('assessment');
-  }
-
-  printAssessment() {
-    window.print();
   }
 }

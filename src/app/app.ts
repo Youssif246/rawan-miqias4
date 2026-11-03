@@ -2,7 +2,6 @@ import { Component, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AssessmentService } from './services/assessment.service';
-import { AssessmentItem } from './models/assessment.model';
 
 @Component({
   selector: 'app-root',
