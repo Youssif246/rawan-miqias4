@@ -890,6 +890,7 @@
     <!-- جداول الطباعة التفصيلية (تبدأ بصفحة جديدة دائماً) -->
     <!-- ============================================== -->
     @if (printMode() !== 'cutoff-only') {
+    <div class="page-break-forced print-only"></div>
     <div class="print-tables-all print-only">
       <div class="print-student-summary">
         <span><strong>اسم الطفل:</strong> {{ service.childProfile().childName || '—' }}</span>
