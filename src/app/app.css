@@ -2104,7 +2104,7 @@
 @media print {
   @page {
     size: A4 portrait;
-    margin: 1cm;
+    margin: 0;
   }
 
   body, .site-container {
@@ -2121,9 +2121,9 @@
   }
 
   .print-official-header {
-    border-bottom: 2px solid #000000;
-    padding-bottom: 10px;
-    margin-bottom: 15px;
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 10px;
   }
 
   .p-header-flex {
@@ -2153,6 +2153,7 @@
   .p-left-side {
     font-size: 9pt;
     text-align: left;
+    white-space: nowrap;
   }
 
   /* Cover Section: Guaranteed to end cleanly before tables */
@@ -2161,6 +2162,8 @@
     break-inside: avoid;
     page-break-after: always !important;
     break-after: page !important;
+    padding: 10mm 14mm;
+    box-sizing: border-box;
     margin-bottom: 20px;
   }
 
@@ -2293,11 +2296,283 @@
     page-break-inside: avoid;
   }
 
+  /* ========================================================== */
+  /* استمارة درجات القطع الرسمية (Print Cutoff Form Clean A4)   */
+  /* ========================================================== */
   .print-cutoff-form {
     page-break-before: always;
     break-before: page;
     page-break-inside: avoid;
     break-inside: avoid;
+    padding: 10mm 14mm;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: 'Tajawal', sans-serif;
+  }
+
+  /* 1. الترويسة الحكومية الرسمية المتوازنة */
+  .print-cutoff-letterhead {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 4px 4px 4px;
+  }
+
+  .letterhead-right {
+    flex: 1;
+    text-align: right;
+  }
+
+  .gov-line-1 {
+    font-size: 10pt;
+    font-weight: 800;
+    color: #1e293b;
+    line-height: 1.35;
+  }
+
+  .gov-line-2 {
+    font-size: 10pt;
+    font-weight: 800;
+    color: #1e293b;
+    line-height: 1.35;
+  }
+
+  .gov-line-3 {
+    font-size: 8.5pt;
+    font-weight: 700;
+    color: #334155;
+    line-height: 1.35;
+  }
+
+  .gov-line-4 {
+    font-size: 8pt;
+    font-weight: 700;
+    color: #334155;
+    line-height: 1.35;
+  }
+
+  .letterhead-left {
+    flex: 1;
+    text-align: left;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  .cutoff-moe-logo {
+    height: 58px;
+    width: auto;
+    object-fit: contain;
+    display: inline-block;
+  }
+
+  .print-cutoff-divider {
+    border-bottom: 2px solid #0f4d31;
+    margin: 6px 0 12px 0;
+  }
+
+  /* 2. عنوان الاستمارة بكامل العرض */
+  .print-cutoff-title-block {
+    text-align: center;
+    margin: 0 0 12px 0;
+  }
+
+  .main-title-red {
+    color: #b91c1c !important;
+    font-size: 13pt !important;
+    font-weight: 800 !important;
+    margin: 0 0 3px 0 !important;
+    letter-spacing: -0.2px;
+  }
+
+  .sub-title-red {
+    color: #b91c1c !important;
+    font-size: 10.5pt !important;
+    font-weight: bold !important;
+    margin: 0 !important;
+  }
+
+  /* 3. بطاقة بيانات الطفل وفترة الملاحظة */
+  .print-cutoff-info-card {
+    border: 1px solid #94a3b8;
+    background: #f8fafc;
+    border-radius: 4px;
+    padding: 8px 14px;
+    margin-bottom: 12px;
+    font-size: 9pt;
+  }
+
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 5px;
+  }
+
+  .info-row:last-child {
+    margin-bottom: 0;
+  }
+
+  .info-item {
+    flex: 1;
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+  }
+
+  .info-item .item-label {
+    color: #334155;
+    font-weight: 600;
+  }
+
+  .info-item .item-value {
+    color: #0f172a;
+    font-weight: bold;
+  }
+
+  /* 4. جدول درجات القطع */
+  .print-cutoff-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 12px;
+    font-size: 9pt;
+    text-align: center;
+  }
+
+  .print-cutoff-table th,
+  .print-cutoff-table td {
+    border: 1px solid #475569;
+    padding: 5px 6px;
+  }
+
+  .print-cutoff-table thead th {
+    background: #ecfdf5 !important;
+    color: #064e3b !important;
+    font-weight: 800;
+    font-size: 9.5pt;
+  }
+
+  .print-cutoff-table .th-domain-label {
+    width: 28%;
+    text-align: right;
+    padding-right: 10px;
+  }
+
+  .print-cutoff-table .td-row-title {
+    text-align: right;
+    font-weight: bold;
+    background: #f8fafc;
+    color: #0f172a;
+    padding-right: 10px;
+  }
+
+  .print-cutoff-table .td-score-val {
+    font-size: 10.5pt;
+    font-weight: bold;
+    color: #0f172a;
+  }
+
+  .print-cutoff-table .td-note-val {
+    font-weight: bold;
+    font-size: 9pt;
+  }
+
+  .print-cutoff-table .td-note-val.danger-note {
+    color: #b91c1c;
+  }
+
+  /* 5. سؤال التدخل المبكر */
+  .print-cutoff-decision {
+    margin: 10px 0;
+    font-size: 10.5pt;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .decision-prompt {
+    color: #b91c1c;
+    font-weight: 800;
+  }
+
+  .checkbox-option {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-right: 8px;
+    font-size: 10.5pt;
+    font-weight: bold;
+    color: #0f172a;
+  }
+
+  .checkbox-option .box-icon {
+    font-size: 13pt;
+    line-height: 1;
+    font-family: Arial, sans-serif;
+  }
+
+  /* 6. فقرة التقرير الرسمية */
+  .print-cutoff-report-section {
+    margin: 10px 0 14px 0;
+  }
+
+  .report-lead {
+    font-size: 10.5pt;
+    font-weight: 800;
+    color: #0f4d31;
+    margin-bottom: 4px;
+  }
+
+  .report-box-content {
+    font-size: 9.5pt;
+    line-height: 1.85;
+    text-align: justify;
+    border: 1px solid #94a3b8;
+    background: #ffffff;
+    padding: 8px 12px;
+    border-radius: 4px;
+    color: #1e293b;
+  }
+
+  /* 7. صندوق التوقيع */
+  .print-cutoff-signatures {
+    border: 1px solid #94a3b8;
+    background: #f8fafc;
+    border-radius: 4px;
+    padding: 10px 14px;
+    margin-top: 14px;
+    display: flex;
+    justify-content: space-between;
+    text-align: center;
+    font-size: 9pt;
+  }
+
+  .sig-column {
+    flex: 1;
+  }
+
+  .sig-title {
+    color: #475569;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  .sig-fill {
+    font-weight: bold;
+    color: #0f172a;
+    font-size: 9.5pt;
+  }
+
+  /* 8. تذييل حقوق التطوير */
+  .print-cutoff-credit {
+    text-align: center;
+    font-size: 9pt;
+    font-weight: bold;
+    color: #0f172a;
+    margin-top: 14px;
+    padding-top: 6px;
+    border-top: 1px dashed #94a3b8;
   }
 
   .print-footer-credit {

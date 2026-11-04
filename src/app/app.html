@@ -8,7 +8,7 @@
         <div class="moe-brand-divider"></div>
         <div class="moe-brand-titles">
           <span class="gov-title">المملكة العربية السعودية • وزارة التعليم</span>
-          <h1 class="portal-name">نظام القياس والتقويم والبرمجة (AEPS) - استمارة تسجيل بيانات ملاحظة الطفل</h1>
+          <h1 class="portal-name">نظام القياس والتقويم والبرمجة (AEPS) - تسجيل بيانات ملاحظة الطفل</h1>
         </div>
       </div>
 
@@ -30,7 +30,7 @@
 
         <button type="button" class="step-item" [class.active]="currentPage() === 3" (click)="setPage(3)">
           <span class="step-badge">3</span>
-          <span>استمارة درجات القطع والأهلية</span>
+          <span>درجات القطع والأهلية للتدخل المبكر</span>
         </button>
       </div>
     </div>
@@ -46,7 +46,7 @@
 
       <div class="moe-card form-box">
         <div class="section-title-line">
-          <h3 class="form-title">بيانات استمارة ملاحظة الطفل</h3>
+          <h3 class="form-title">بيانات ملاحظة الطفل</h3>
           <span class="form-subtitle">يرجى استيفاء البيانات الأساسية قبل البدء في تقييم البنود</span>
         </div>
 
@@ -95,7 +95,7 @@
         <div class="moe-instructions-box">
           <div class="instructions-head">
             <span class="inst-icon">📋</span>
-            <strong>تعليمات قبل استخدام استمارة تسجيل بيانات ملاحظة الطفل:</strong>
+            <strong>تعليمات قبل استخدام نظام القياس والتقويم والبرمجة (AEPS):</strong>
           </div>
           <p class="instructions-p">
             يجب مراجعة المادة التي تبدأ من صفحة 45 في هذا المجلد (المجلد الأصلي المأخوذ منه المقياس) والمادة التي تبدأ
@@ -797,20 +797,23 @@
     @if (printMode() !== 'cutoff-only') {
     <div class="print-cover-section print-only">
       <div class="print-official-header">
-        <div class="p-header-flex">
-          <div class="p-right-side">
-            <img src="moe-logo.svg" alt="وزارة التعليم" class="p-moe-logo-img">
-            <div class="p-sub-gov">المملكة العربية السعودية • وزارة التعليم</div>
+        <div class="print-cutoff-letterhead">
+          <div class="letterhead-right">
+            <div class="gov-line-1">المملكة العربية السعودية</div>
+            <div class="gov-line-2">وزارة التعليم</div>
+            <div class="gov-line-3">الإدارة العامة للتعليم بمحافظة جدة</div>
+            <div class="gov-line-4">إدارة تنمية القدرات - قسم ذوي الإعاقة</div>
           </div>
 
-          <div class="p-center">
-            <h2>نظام القياس والتقويم والبرمجة (AEPS) - استمارة تسجيل بيانات ملاحظة الطفل</h2>
+          <div class="letterhead-left">
+            <img src="moe-logo.svg" alt="وزارة التعليم" class="cutoff-moe-logo">
           </div>
+        </div>
 
-          <div class="p-left-side">
-            <div><strong>تاريخ اليوم:</strong> {{ service.childProfile().assessmentDate }}</div>
-            <div><strong>فترة الاختبار:</strong> {{ service.childProfile().testPeriod }}</div>
-          </div>
+        <div class="print-cutoff-divider"></div>
+
+        <div class="print-cutoff-title-block">
+          <h2 style="font-size: 13pt; margin: 0; font-weight: bold; color: #0f4d31;">نظام القياس والتقويم والبرمجة (AEPS) - تسجيل بيانات ملاحظة الطفل</h2>
         </div>
       </div>
 
@@ -954,102 +957,132 @@
     <!-- ============================================================== -->
     @if (printMode() === 'cutoff-only' || printMode() === 'all') {
     <div class="print-cutoff-form print-only">
-      <div class="print-official-header">
-        <div class="p-header-flex">
-          <div class="p-right-side">
-            <img src="moe-logo.svg" alt="وزارة التعليم" class="p-moe-logo-img">
-            <div class="p-sub-gov">المملكة العربية السعودية • وزارة التعليم</div>
+
+      <!-- 1. الترويسة الحكومية الرسمية لوزارة التعليم (شعار الوزارة واسم المملكة) -->
+      <div class="print-cutoff-letterhead">
+        <div class="letterhead-right">
+          <div class="gov-line-1">المملكة العربية السعودية</div>
+          <div class="gov-line-2">وزارة التعليم</div>
+          <div class="gov-line-3">الإدارة العامة للتعليم بمحافظة جدة</div>
+          <div class="gov-line-4">إدارة تنمية القدرات - قسم ذوي الإعاقة</div>
+        </div>
+
+        <div class="letterhead-left">
+          <img src="moe-logo.svg" alt="وزارة التعليم" class="cutoff-moe-logo">
+        </div>
+      </div>
+
+      <!-- خط فاصل رسمي -->
+      <div class="print-cutoff-divider"></div>
+
+      <!-- 2. عنوان الاستمارة الرسمي بكامل عرض الصفحة ودون أي تزاحم -->
+      <div class="print-cutoff-title-block">
+        <h1 class="main-title-red">
+          درجات القطع لنظام القياس والتقويم والبرمجة AEPS
+        </h1>
+        <h2 class="sub-title-red">
+          ( لتقرير الأهلية لخدمات التدخل المبكر )
+        </h2>
+      </div>
+
+      <!-- 3. شبكة بيانات الطفل وفترة الملاحظة بتنسيق أنيق ومتناسق -->
+      <div class="print-cutoff-info-card">
+        <div class="info-row">
+          <div class="info-item">
+            <span class="item-label">اسم الطفل:</span>
+            <strong class="item-value">{{ service.childProfile().childName || '—' }}</strong>
           </div>
-          <div class="p-center">
-            <h2 style="color: #c00000; font-size: 13pt; margin: 0; font-weight: bold;">
-              درجات القطع لنظام القياس والتقويم والبرمجة AEPS ( لتقرير الأهلية لخدمات التدخل المبكر )
-            </h2>
+          <div class="info-item">
+            <span class="item-label">العمر الزمني للطفل بالأشهر:</span>
+            <strong class="item-value">{{ getEffectiveAgeMonths() }}</strong>
           </div>
-          <div class="p-left-side">
-            <div><strong>تاريخ اليوم:</strong> {{ service.childProfile().assessmentDate }}</div>
+        </div>
+        <div class="info-row">
+          <div class="info-item">
+            <span class="item-label">تاريخ بدء الملاحظة:</span>
+            <strong class="item-value">{{ service.eligibilityForm().observationStartDate || service.childProfile().assessmentDate || '—' }}</strong>
+          </div>
+          <div class="info-item">
+            <span class="item-label">تاريخ الانتهاء من الملاحظة:</span>
+            <strong class="item-value">{{ service.eligibilityForm().observationEndDate || service.childProfile().assessmentDate || '—' }}</strong>
           </div>
         </div>
       </div>
 
-      <div class="print-profile-grid" style="margin-bottom: 15px;">
-        <div class="p-field"><span>اسم الطفل :</span> <strong>{{ service.childProfile().childName || '—' }}</strong>
-        </div>
-        <div class="p-field"><span>العمر الزمني للطفل بالأشهر :</span> <strong>{{ getEffectiveAgeMonths() }}</strong>
-        </div>
-        <div class="p-field"><span>تاريخ بدء الملاحظة :</span> <strong>{{ service.eligibilityForm().observationStartDate
-            || service.childProfile().assessmentDate }}</strong></div>
-        <div class="p-field"><span>تاريخ الانتهاء من الملاحظة :</span> <strong>{{
-            service.eligibilityForm().observationEndDate || service.childProfile().assessmentDate }}</strong></div>
-      </div>
-
-      <table class="print-simple-table" style="margin-bottom: 18px; text-align: center;">
+      <!-- 4. جدول درجات القطع والمقارنة (5 مجالات) -->
+      <table class="print-cutoff-table">
         <thead>
           <tr>
-            <th style="width: 28%; text-align: right; background: #f1f5f9;">المجال</th>
+            <th class="th-domain-label">المجال</th>
             @for (row of service.eligibilityComparison(); track row.domainId) {
-            <th style="text-align: center;">{{ row.title }}</th>
+            <th class="th-domain-col">{{ row.title }}</th>
             }
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td style="text-align: right; font-weight: bold; background: #f8fafc;">درجة الأهداف العامة للمجالات للطفل
-            </td>
+          <!-- صف درجات الطفل -->
+          <tr class="tr-scores">
+            <td class="td-row-title">درجة الأهداف العامة للمجالات للطفل</td>
             @for (row of service.eligibilityComparison(); track row.domainId) {
-            <td style="font-weight: bold; font-size: 11pt;">{{ row.childScore }}</td>
+            <td class="td-score-val">{{ row.childScore }}</td>
             }
           </tr>
-          <tr>
-            <td style="text-align: right; font-weight: bold; background: #f8fafc;">درجة القطع للشريحة العمرية</td>
+          <!-- صف درجات القطع للشريحة العمرية -->
+          <tr class="tr-benchmarks">
+            <td class="td-row-title">درجة القطع للشريحة العمرية</td>
             @for (row of service.eligibilityComparison(); track row.domainId) {
-            <td style="font-weight: bold; font-size: 11pt;">{{ row.benchmarkScore }}</td>
+            <td class="td-score-val">{{ row.benchmarkScore }}</td>
             }
           </tr>
-          <tr>
-            <td style="text-align: right; font-weight: bold; background: #f8fafc;">ملاحظات</td>
+          <!-- صف الملاحظات -->
+          <tr class="tr-notes">
+            <td class="td-row-title">ملاحظات</td>
             @for (row of service.eligibilityComparison(); track row.domainId) {
-            <td style="font-weight: bold;">{{ row.note }}</td>
+            <td class="td-note-val" [class.danger-note]="row.isUnderCutoff">{{ row.note }}</td>
             }
           </tr>
         </tbody>
       </table>
 
-      <div style="margin: 15px 0; font-size: 10.5pt; font-weight: bold;">
-        هل يحتاج الطفل الى خدمات التدخل المبكر :
-        <span style="display: inline-block; margin-right: 15px;">
-          {{ service.eligibilityForm().needsIntervention ? '☑' : '☐' }} نعم
+      <!-- 5. سؤال استحقاق خدمات التدخل المبكر -->
+      <div class="print-cutoff-decision">
+        <span class="decision-prompt">هل يحتاج الطفل إلى خدمات التدخل المبكر :</span>
+        <span class="checkbox-option">
+          <span class="box-icon">{{ service.eligibilityForm().needsIntervention ? '☑' : '☐' }}</span>
+          <span class="box-txt">نعم</span>
         </span>
-        <span style="display: inline-block; margin-right: 25px;">
-          {{ !service.eligibilityForm().needsIntervention ? '☑' : '☐' }} لا
+        <span class="checkbox-option">
+          <span class="box-icon">{{ !service.eligibilityForm().needsIntervention ? '☑' : '☐' }}</span>
+          <span class="box-txt">لا</span>
         </span>
       </div>
 
-      <div style="margin: 15px 0 25px 0;">
-        <div style="font-weight: bold; font-size: 10.5pt; margin-bottom: 6px;">التقرير :</div>
-        <p
-          style="font-size: 9.5pt; line-height: 1.8; text-align: justify; margin: 0; background: #fafafa; padding: 10px; border: 1px solid #cbd5e1; border-radius: 4px;">
+      <!-- 6. فقرة التقرير الرسمية -->
+      <div class="print-cutoff-report-section">
+        <div class="report-lead">التقرير :</div>
+        <div class="report-box-content">
           {{ service.eligibilityForm().reportText }}
-        </p>
-      </div>
-
-      <div class="print-sigs-box" style="margin-top: 20px;">
-        <div class="p-sigs-row">
-          <div>
-            <span>اسم الشخص الذي يكمل الاستمارة:</span><br>
-            <strong>{{ service.childProfile().formFiller || '................................' }}</strong>
-          </div>
-          <div>
-            <span>التاريخ:</span><br>
-            <strong>{{ service.childProfile().assessmentDate }}</strong>
-          </div>
-          <div>
-            <span>التوقيع:</span><br>
-            <strong>................................</strong>
-          </div>
         </div>
       </div>
 
-      <div class="print-footer-credit" style="margin-top: 25px;">
+      <!-- 7. صندوق التوقيع وبيانات الفاحص المعتمدة -->
+      <div class="print-cutoff-signatures">
+        <div class="sig-column">
+          <div class="sig-title">اسم الشخص الذي يكمل الاستمارة:</div>
+          <div class="sig-fill">{{ service.childProfile().formFiller || '................................' }}</div>
+        </div>
+        <div class="sig-column">
+          <div class="sig-title">التاريخ:</div>
+          <div class="sig-fill">{{ service.childProfile().assessmentDate || '—' }}</div>
+        </div>
+        <div class="sig-column">
+          <div class="sig-title">التوقيع:</div>
+          <div class="sig-fill">................................</div>
+        </div>
+      </div>
+
+      <!-- 8. تذييل حقوق تطوير النسخة الإلكترونية -->
+      <div class="print-cutoff-credit">
         تطوير النسخة الإلكترونية : أ/ روان العمري
       </div>
     </div>

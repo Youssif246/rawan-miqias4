@@ -222,28 +222,21 @@ export class AssessmentService {
 
   /**
    * Recalculates the parent (ص) item score based on all its sub-items
-   * Applies strictly to cutoff goals with MULTIPLE sub-items (such as 2.1 and 2.2)
+   * Applies to all cutoff goals with sub-items (both single sub-items like 1.1 and multiple like 2.1, 2.2)
    */
   private updateParentCutoffScore(parentItemId: string, evals: Record<string, ItemEvaluation>) {
     const parentItem = this.itemMap.get(parentItemId);
-    // Must have at least 2 sub-items (مثل 2.1 و 2.2).
-    // A single sub-item (such as 1.1) is an independent item and must never lock the parent item!
-    if (!parentItem || !parentItem.subItemIds || parentItem.subItemIds.length < 2) {
+    if (!parentItem || !parentItem.subItemIds || parentItem.subItemIds.length === 0) {
       return;
     }
 
     const parentCurrent = evals[parentItemId] || { score: null };
 
-    // If the evaluator manually scored this parent item directly, do not overwrite their manual choice!
-    if (parentCurrent.score !== null && !parentCurrent.isAutoCalculated) {
-      return;
-    }
-
     const subItemIds = parentItem.subItemIds;
     const subScores = subItemIds.map(id => evals[id]?.score);
     const answeredScores = subScores.filter((s): s is number => s !== null && s !== undefined);
 
-    // If no sub-items are answered at all, reset parent score to null
+    // If no sub-items are answered at all, reset parent score to null if it was auto-calculated
     if (answeredScores.length === 0) {
       if (parentCurrent.isAutoCalculated) {
         evals[parentItemId] = {

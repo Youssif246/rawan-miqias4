@@ -17,7 +17,10 @@ export const ASSESSMENT_DOMAINS: AssessmentDomain[] = [
             "text": "يستخدم اليدين للتعامل مع الأشياء، حيث تؤدي كل يد حركة مختلفة",
             "raw": "1- يستخدم اليدين للتعامل مع الأشياء، حيث تؤدي كل يد حركة مختلفة (ص)",
             "isCutoff": true,
-            "maxScore": 2
+            "maxScore": 2,
+            "subItemIds": [
+              "domain_1_item_2"
+            ]
           },
           {
             "id": "domain_1_item_2",
@@ -26,7 +29,8 @@ export const ASSESSMENT_DOMAINS: AssessmentDomain[] = [
             "text": "يمسك شيئاً بأي من يديه بينما تتعامل اليد الأخرى مع الشيء",
             "raw": "1-1 يمسك شيئاً بأي من يديه بينما تتعامل اليد الأخرى مع الشيء",
             "isCutoff": false,
-            "maxScore": 2
+            "maxScore": 2,
+            "parentItemId": "domain_1_item_1"
           },
           {
             "id": "domain_1_item_3",
@@ -73,7 +77,10 @@ export const ASSESSMENT_DOMAINS: AssessmentDomain[] = [
             "text": "يكتب باستخدام مسكة الأصابع الثلاثة",
             "raw": "1-  يكتب باستخدام مسكة الأصابع الثلاثة (ص)",
             "isCutoff": true,
-            "maxScore": 2
+            "maxScore": 2,
+            "subItemIds": [
+              "domain_1_item_7"
+            ]
           },
           {
             "id": "domain_1_item_7",
@@ -82,7 +89,8 @@ export const ASSESSMENT_DOMAINS: AssessmentDomain[] = [
             "text": "يستخدم مسكة الأصابع الثلاثة لإمساك أداة الكتابة",
             "raw": "1-1  يستخدم مسكة الأصابع الثلاثة لإمساك أداة الكتابة",
             "isCutoff": false,
-            "maxScore": 2
+            "maxScore": 2,
+            "parentItemId": "domain_1_item_6"
           },
           {
             "id": "domain_1_item_8",
@@ -192,7 +200,10 @@ export const ASSESSMENT_DOMAINS: AssessmentDomain[] = [
             "text": "يجري متفادياً العوائق",
             "raw": "1-  يجري متفادياً العوائق (ص)",
             "isCutoff": true,
-            "maxScore": 2
+            "maxScore": 2,
+            "subItemIds": [
+              "domain_2_item_2"
+            ]
           },
           {
             "id": "domain_2_item_2",
@@ -201,7 +212,8 @@ export const ASSESSMENT_DOMAINS: AssessmentDomain[] = [
             "text": "يجري",
             "raw": "1-1 يجري",
             "isCutoff": false,
-            "maxScore": 2
+            "maxScore": 2,
+            "parentItemId": "domain_2_item_1"
           },
           {
             "id": "domain_2_item_3",
@@ -210,7 +222,10 @@ export const ASSESSMENT_DOMAINS: AssessmentDomain[] = [
             "text": "يصعد السلم وينزله بحركة متناوبة للقدمين",
             "raw": "2- يصعد السلم وينزله بحركة متناوبة للقدمين (ص)",
             "isCutoff": true,
-            "maxScore": 2
+            "maxScore": 2,
+            "subItemIds": [
+              "domain_2_item_4"
+            ]
           },
           {
             "id": "domain_2_item_4",
@@ -219,7 +234,8 @@ export const ASSESSMENT_DOMAINS: AssessmentDomain[] = [
             "text": "يصعد السلم وينزله",
             "raw": "2-1 يصعد السلم وينزله",
             "isCutoff": false,
-            "maxScore": 2
+            "maxScore": 2,
+            "parentItemId": "domain_2_item_3"
           }
         ]
       },
@@ -332,7 +348,10 @@ export const ASSESSMENT_DOMAINS: AssessmentDomain[] = [
             "text": "يثب",
             "raw": "3 - يثب (ص)",
             "isCutoff": true,
-            "maxScore": 2
+            "maxScore": 2,
+            "subItemIds": [
+              "domain_2_item_15"
+            ]
           },
           {
             "id": "domain_2_item_15",
@@ -341,7 +360,8 @@ export const ASSESSMENT_DOMAINS: AssessmentDomain[] = [
             "text": "يحجل",
             "raw": "1-3  يحجل",
             "isCutoff": false,
-            "maxScore": 2
+            "maxScore": 2,
+            "parentItemId": "domain_2_item_14"
           },
           {
             "id": "domain_2_item_16",
@@ -350,7 +370,10 @@ export const ASSESSMENT_DOMAINS: AssessmentDomain[] = [
             "text": "يركب دراجة ثنائية ويوجهها",
             "raw": "-4  يركب دراجة ثنائية ويوجهها (ص)",
             "isCutoff": true,
-            "maxScore": 2
+            "maxScore": 2,
+            "subItemIds": [
+              "domain_2_item_17"
+            ]
           },
           {
             "id": "domain_2_item_17",
@@ -359,7 +382,8 @@ export const ASSESSMENT_DOMAINS: AssessmentDomain[] = [
             "text": "يقود دراجة ثنائية مزودة بعجلتي تدريب ويوجهها",
             "raw": "1-4  يقود دراجة ثنائية مزودة بعجلتي تدريب ويوجهها",
             "isCutoff": false,
-            "maxScore": 2
+            "maxScore": 2,
+            "parentItemId": "domain_2_item_16"
           }
         ]
       }
@@ -953,7 +977,10 @@ export const ASSESSMENT_DOMAINS: AssessmentDomain[] = [
             "text": "يتبع توجيهات لا تعطى كثيراً مكونة من ثلاث خطوات مرتبطة أو أكثر",
             "raw": "1- يتبع توجيهات لا تعطى كثيراً مكونة من ثلاث خطوات مرتبطة أو أكثر (ص)",
             "isCutoff": true,
-            "maxScore": 2
+            "maxScore": 2,
+            "subItemIds": [
+              "domain_4_item_16"
+            ]
           },
           {
             "id": "domain_4_item_16",
@@ -962,7 +989,8 @@ export const ASSESSMENT_DOMAINS: AssessmentDomain[] = [
             "text": "يتبع توجيهات تعطى كثيراً مكونة من ثلاث خطوات مرتبطة أو أكثر",
             "raw": "1-1 يتبع توجيهات تعطى كثيراً مكونة من ثلاث خطوات مرتبطة أو أكثر",
             "isCutoff": false,
-            "maxScore": 2
+            "maxScore": 2,
+            "parentItemId": "domain_4_item_15"
           },
           {
             "id": "domain_4_item_17",
@@ -971,7 +999,10 @@ export const ASSESSMENT_DOMAINS: AssessmentDomain[] = [
             "text": "يرتب الأشياء وفقاً للطول أو الحجم",
             "raw": "2- يرتب الأشياء وفقاً للطول أو الحجم (ص)",
             "isCutoff": true,
-            "maxScore": 2
+            "maxScore": 2,
+            "subItemIds": [
+              "domain_4_item_18"
+            ]
           },
           {
             "id": "domain_4_item_18",
@@ -980,7 +1011,8 @@ export const ASSESSMENT_DOMAINS: AssessmentDomain[] = [
             "text": "يدخل مجموعة مرتبة من الأشياء في أخرى",
             "raw": "2-1 يدخل مجموعة مرتبة من الأشياء في أخرى",
             "isCutoff": false,
-            "maxScore": 2
+            "maxScore": 2,
+            "parentItemId": "domain_4_item_17"
           },
           {
             "id": "domain_4_item_19",
@@ -989,7 +1021,10 @@ export const ASSESSMENT_DOMAINS: AssessmentDomain[] = [
             "text": "يعيد سرد حدث بالترتيب",
             "raw": "3- يعيد سرد حدث بالترتيب (ص)",
             "isCutoff": true,
-            "maxScore": 2
+            "maxScore": 2,
+            "subItemIds": [
+              "domain_4_item_20"
+            ]
           },
           {
             "id": "domain_4_item_20",
@@ -998,7 +1033,8 @@ export const ASSESSMENT_DOMAINS: AssessmentDomain[] = [
             "text": "يكمل قصة أو حدث مألوف بالترتيب",
             "raw": "3-1 يكمل قصة أو حدث مألوف بالترتيب",
             "isCutoff": false,
-            "maxScore": 2
+            "maxScore": 2,
+            "parentItemId": "domain_4_item_19"
           }
         ]
       },
@@ -1373,7 +1409,10 @@ export const ASSESSMENT_DOMAINS: AssessmentDomain[] = [
             "text": "يقرأ الكلمات بالنظر",
             "raw": "3- يقرأ الكلمات بالنظر (ص)",
             "isCutoff": true,
-            "maxScore": 2
+            "maxScore": 2,
+            "subItemIds": [
+              "domain_4_item_53"
+            ]
           },
           {
             "id": "domain_4_item_53",
@@ -1382,7 +1421,8 @@ export const ASSESSMENT_DOMAINS: AssessmentDomain[] = [
             "text": "يتعرف على أسماء الحروف",
             "raw": "3-1 يتعرف على أسماء الحروف",
             "isCutoff": false,
-            "maxScore": 2
+            "maxScore": 2,
+            "parentItemId": "domain_4_item_52"
           }
         ]
       }

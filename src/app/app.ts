@@ -152,8 +152,15 @@ export class App {
 
   printReport(mode: 'all' | 'cutoff-only' = 'all') {
     this.printMode.set(mode);
+    const prevTitle = document.title;
+    if (mode === 'cutoff-only') {
+      document.title = 'درجات القطع لنظام القياس والتقويم والبرمجة AEPS - تقرير الأهلية لخدمات التدخل المبكر';
+    } else {
+      document.title = 'نظام القياس والتقويم والبرمجة (AEPS) - تقرير تسجيل بيانات ملاحظة الطفل';
+    }
     setTimeout(() => {
       window.print();
-    }, 50);
+      document.title = prevTitle;
+    }, 80);
   }
 }
