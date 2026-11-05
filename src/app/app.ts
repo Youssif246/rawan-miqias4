@@ -76,12 +76,17 @@ export class App {
       let curPageStrands: typeof dom.strands = [];
       let curPageItems = 0;
 
-      // Group whole strands onto a page (either 1 large strand, or 2-3 shorter strands)
-      const MAX_COMBINED_PER_PAGE = 27;
+      // Group at most 2 whole strands per page, capped at 24 items
+      const MAX_STRANDS_PER_PAGE = 2;
+      const MAX_COMBINED_ITEMS = 24;
 
       dom.strands.forEach((strand) => {
         const count = strand.items.length;
-        if (curPageStrands.length > 0 && (curPageItems + count > MAX_COMBINED_PER_PAGE)) {
+        const shouldBreak =
+          curPageStrands.length >= MAX_STRANDS_PER_PAGE ||
+          (curPageStrands.length > 0 && curPageItems + count > MAX_COMBINED_ITEMS);
+
+        if (shouldBreak) {
           domPages.push(curPageStrands);
           curPageStrands = [strand];
           curPageItems = count;
