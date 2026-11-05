@@ -2,6 +2,7 @@ import { Component, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AssessmentService } from './services/assessment.service';
+import { AssessmentItem, ObservationPrintPage, ObservationPrintSection } from './models/assessment.model';
 import { jsPDF } from 'jspdf';
 import { toJpeg } from 'html-to-image';
 import { MOE_LOGO_BASE64 } from './assets/moe-logo.base64';
@@ -66,6 +67,62 @@ export class App {
   readonly currentDomainCalc = computed(() => {
     return this.service.domainCalculations()[this.activeDomainIndex()];
   });
+
+  readonly paginatedObservationPages = computed<ObservationPrintPage[]>(() => {
+    const pages: ObservationPrintPage[] = [];
+    const domains = this.service.domains;
+    const MAX_PER_PAGE = 18;
+
+    domains.forEach((dom, domIdx) => {
+      const allStrandItems: { strandTitle: string; item: AssessmentItem }[] = [];
+      for (const strand of dom.strands) {
+        for (const item of strand.items) {
+          allStrandItems.push({ strandTitle: strand.title, item });
+        }
+      }
+
+      const totalItems = allStrandItems.length;
+      if (totalItems === 0) return;
+
+      const numPages = Math.ceil(totalItems / MAX_PER_PAGE);
+      const baseSize = Math.floor(totalItems / numPages);
+      const remainder = totalItems % numPages;
+
+      let itemOffset = 0;
+      for (let p = 0; p < numPages; p++) {
+        const countThisPage = baseSize + (p < remainder ? 1 : 0);
+        const slice = allStrandItems.slice(itemOffset, itemOffset + countThisPage);
+        itemOffset += countThisPage;
+
+        const sections: ObservationPrintSection[] = [];
+        let currentSection: ObservationPrintSection | null = null;
+
+        for (const entry of slice) {
+          if (!currentSection || currentSection.strandTitle !== entry.strandTitle) {
+            currentSection = { strandTitle: entry.strandTitle, items: [entry.item] };
+            sections.push(currentSection);
+          } else {
+            currentSection.items.push(entry.item);
+          }
+        }
+
+        pages.push({
+          domainId: dom.id,
+          domainTitle: dom.title,
+          domainIndex: domIdx,
+          pageInDomain: p + 1,
+          totalPagesInDomain: numPages,
+          sections,
+          totalItems: countThisPage,
+          isLastPageOfDomain: p === numPages - 1
+        });
+      }
+    });
+
+    return pages;
+  });
+
+  readonly totalObservationPages = computed<number>(() => this.paginatedObservationPages().length);
 
   getShortTitle(title: string): string {
     if (title.includes('التواصل الاجتماعي')) return 'التواصل الاجتماعي';
@@ -203,23 +260,25 @@ export class App {
         this.pdfProgressText.set('اكتمل التقرير! جاري التحميل...');
         pdf.save(`تقرير_درجات_القطع_AEPS_${childName}.pdf`);
       } else {
-        // Multi-page Full Assessment Report
-        this.pdfProgressText.set('جاري إعداد صفحة الغلاف والملخص العام...');
+        // Multi-page Full Assessment Report (Discrete A4 Pages)
+        this.pdfProgressText.set('جاري إعداد صفحة الغلاف والملخص العام (صفحة 1)...');
         const coverEl = document.querySelector('.print-cover-section') as HTMLElement;
         if (coverEl) {
           const coverRes = await this.captureElement(coverEl, true);
           this.addImageToPdf(pdf, coverRes.imgData, coverRes.heightMm, true);
         }
 
-        const domainEls = Array.from(document.querySelectorAll('.print-one-domain')) as HTMLElement[];
-        for (let i = 0; i < domainEls.length; i++) {
-          this.pdfProgressText.set(`جاري معالجة المجال (${i + 1} من ${domainEls.length})...`);
+        const pageBlocks = Array.from(document.querySelectorAll('.pdf-page-block')) as HTMLElement[];
+        const totalPages = pageBlocks.length + 2; // Cover (1) + Observation Pages + Cutoff Form (1)
+        for (let i = 0; i < pageBlocks.length; i++) {
+          const pageNum = i + 2;
+          this.pdfProgressText.set(`جاري معالجة جداول الملاحظة (صفحة ${pageNum} من ${totalPages})...`);
           pdf.addPage();
-          const domRes = await this.captureElement(domainEls[i], false);
-          this.addImageToPdf(pdf, domRes.imgData, domRes.heightMm, false);
+          const pageRes = await this.captureElement(pageBlocks[i], true);
+          this.addImageToPdf(pdf, pageRes.imgData, pageRes.heightMm, true);
         }
 
-        this.pdfProgressText.set('جاري إرفاق استمارة درجات القطع والأهلية...');
+        this.pdfProgressText.set(`جاري إرفاق استمارة درجات القطع والأهلية (صفحة ${totalPages} من ${totalPages})...`);
         const cutoffEl = document.querySelector('.print-cutoff-form') as HTMLElement;
         if (cutoffEl) {
           pdf.addPage();
@@ -257,7 +316,9 @@ export class App {
     host.style.top = '0';
     host.style.width = '794px';
     if (isFullPageA4) {
+      host.style.height = '1123px';
       host.style.minHeight = '1123px';
+      host.style.maxHeight = '1123px';
     }
     host.style.zIndex = '99990';
     host.style.background = '#ffffff';
@@ -276,7 +337,7 @@ export class App {
       await new Promise(res => setTimeout(res, 80));
 
       const targetWidth = 794;
-      const targetHeight = isFullPageA4 ? Math.max(clone.offsetHeight, 1123) : clone.offsetHeight;
+      const targetHeight = isFullPageA4 ? 1123 : clone.offsetHeight;
 
       const imgData = await toJpeg(clone, {
         quality: 0.98,

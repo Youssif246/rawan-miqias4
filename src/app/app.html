@@ -903,73 +903,141 @@
           </div>
         </div>
       </div>
+
+      <!-- تذييل صفحة الغلاف الرسمية -->
+      <div class="print-page-footer print-cover-footer">
+        <div class="footer-dev">
+          <span class="dev-star">✨</span>
+          <span>تطوير النسخة الإلكترونية : أ/ روان العمري</span>
+        </div>
+        <div class="footer-page-num">
+          <span>صفحة 1 من {{ totalObservationPages() + 2 }}</span>
+        </div>
+      </div>
     </div>
     }
 
     <!-- ============================================== -->
-    <!-- جداول الطباعة التفصيلية (تبدأ بصفحة جديدة دائماً) -->
+    <!-- جداول الطباعة التفصيلية (صفحات مقسمة A4 متناسقة) -->
     <!-- ============================================== -->
     @if (printMode() !== 'cutoff-only') {
     <div class="page-break-forced print-only"></div>
     <div class="print-tables-all print-only">
-      <div class="print-student-summary">
-        <span><strong>اسم الطفل:</strong> {{ service.childProfile().childName || '—' }}</span>
-        <span><strong>تاريخ الميلاد:</strong> {{ service.childProfile().birthDate || '—' }}</span>
-        <span><strong>الشخص الذي يكمل الاستمارة:</strong> {{ service.childProfile().formFiller || '—' }}</span>
-      </div>
+      @for (page of paginatedObservationPages(); track $index) {
+      <div class="pdf-page-block print-only">
+        <!-- 1. ترويسة الصفحة الرسمية: وزارة التعليم والشعار -->
+        <div class="print-page-header">
+          <div class="print-page-header-right">
+            <div class="gov-line-1">المملكة العربية السعودية</div>
+            <div class="gov-line-2">وزارة التعليم</div>
+            <div class="gov-line-3">الإدارة العامة للتعليم بمحافظة جدة</div>
+            <div class="gov-line-4">إدارة تنمية القدرات - قسم ذوي الإعاقة</div>
+          </div>
 
-      <h3 class="print-tables-main-heading">
-        جداول رصد درجات الملاحظة التفصيلية:
-      </h3>
-      @for (dom of service.domains; track dom.id) {
-      <div class="print-one-domain">
-        <h4 class="print-domain-title">{{ dom.title }}</h4>
-        @for (strand of dom.strands; track strand.title) {
-        <p class="print-strand-title">{{ strand.title }}</p>
-        <table class="print-simple-table">
-          <thead>
-            <tr>
-              <th style="width: 45px;">الرقم</th>
-              <th>المفردة / المحك والهدف المعتمد</th>
-              <th style="width: 50px; text-align: center;">الدرجة (د)</th>
-              <th style="width: 120px;">الملحوظات (ل)</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (item of strand.items; track item.id) {
-            <tr [style.font-weight]="item.isCutoff ? 'bold' : 'normal'"
-              [style.background-color]="item.isCutoff ? '#f8fafc' : 'transparent'">
-              <td style="text-align: center;">
-                {{ item.itemNumber }}
-                @if (item.isCutoff) { (ص) }
-              </td>
-              <td>
-                {{ item.text }}
-              </td>
-              <td style="text-align: center; font-weight: bold;">
-                {{ getScore(item.id) !== null ? getScore(item.id) : '-' }}
-              </td>
-              <td>
-                {{ service.evaluations()[item.id]?.noteSymbol || '' }}
-                {{ getNote(item.id) }}
-              </td>
-            </tr>
-            }
-          </tbody>
-        </table>
-        }
-        <div class="print-calc-summary-box">
-          <span>الدرجة الخام للمجال: {{ service.domainCalculations()[$index].totalScore }} / {{
-            service.domainCalculations()[$index].maxScore }}</span>
-          <span>النسبة المئوية: {{ service.domainCalculations()[$index].percentage }}%</span>
-          <span>درجات القطع (ص): {{ service.domainCalculations()[$index].cutoffScore }}</span>
+          <div class="print-page-header-center">
+            <div class="print-header-badge">نظام القياس والتقويم والبرمجة (AEPS)</div>
+            <div class="print-header-sub">استمارة تسجيل بيانات ملاحظة الطفل</div>
+          </div>
+
+          <div class="print-page-header-left">
+            <img [src]="moeLogo" alt="وزارة التعليم" class="page-moe-logo">
+          </div>
+        </div>
+
+        <div class="print-page-divider"></div>
+
+        <!-- 2. شريط بيانات الطفل والمجال -->
+        <div class="print-page-student-bar">
+          <div class="bar-col">
+            <span class="bar-lbl">اسم الطفل:</span>
+            <strong class="bar-val">{{ service.childProfile().childName || '—' }}</strong>
+          </div>
+          <div class="bar-col">
+            <span class="bar-lbl">المجال:</span>
+            <strong class="bar-val domain-name">{{ page.domainTitle }}</strong>
+          </div>
+          <div class="bar-col">
+            <span class="bar-lbl">تاريخ التقييم:</span>
+            <strong class="bar-val">{{ service.childProfile().assessmentDate || '—' }}</strong>
+          </div>
+          <div class="bar-col page-badge-col">
+            <span class="page-pill">صفحة {{ page.pageInDomain }} من {{ page.totalPagesInDomain }} بالمجال</span>
+          </div>
+        </div>
+
+        <!-- 3. المحتوى: أقسام ومفردات المجال وجداول الملاحظة -->
+        <div class="print-page-content">
+          @for (section of page.sections; track section.strandTitle) {
+          <div class="print-strand-badge">
+            <span class="strand-icon">📌</span>
+            <span>{{ section.strandTitle }}</span>
+          </div>
+
+          <table class="print-simple-table">
+            <thead>
+              <tr>
+                <th style="width: 50px; text-align: center;">الرقم</th>
+                <th>المفردة / المحك والهدف المعتمد</th>
+                <th style="width: 60px; text-align: center;">الدرجة (د)</th>
+                <th style="width: 140px;">الملحوظات (ل)</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of section.items; track item.id) {
+              <tr [class.is-cutoff-row]="item.isCutoff">
+                <td style="text-align: center; font-weight: bold;">
+                  {{ item.itemNumber }}
+                  @if (item.isCutoff) { <span class="cutoff-mark">(ص)</span> }
+                </td>
+                <td class="item-text-cell">
+                  {{ item.text }}
+                </td>
+                <td style="text-align: center; font-weight: bold;" [class.score-val-highlight]="getScore(item.id) !== null">
+                  {{ getScore(item.id) !== null ? getScore(item.id) : '-' }}
+                </td>
+                <td class="note-text-cell">
+                  @if (service.evaluations()[item.id]?.noteSymbol) {
+                    <span class="note-sym-badge">{{ service.evaluations()[item.id]?.noteSymbol }}</span>
+                  }
+                  {{ getNote(item.id) }}
+                </td>
+              </tr>
+              }
+            </tbody>
+          </table>
+          }
+
+          <!-- 4. ملخص درجات المجال (في الصفحة الأخيرة من كل مجال فقط) -->
+          @if (page.isLastPageOfDomain) {
+          <div class="print-domain-summary-card">
+            <div class="d-sum-item">
+              <span class="s-label">الدرجة الخام للمجال:</span>
+              <strong class="s-val">{{ service.domainCalculations()[page.domainIndex].totalScore }} / {{ service.domainCalculations()[page.domainIndex].maxScore }}</strong>
+            </div>
+            <div class="d-sum-item">
+              <span class="s-label">النسبة المئوية:</span>
+              <strong class="s-val percent">{{ service.domainCalculations()[page.domainIndex].percentage }}%</strong>
+            </div>
+            <div class="d-sum-item">
+              <span class="s-label">درجات القطع (ص):</span>
+              <strong class="s-val cutoff">{{ service.domainCalculations()[page.domainIndex].cutoffScore }}</strong>
+            </div>
+          </div>
+          }
+        </div>
+
+        <!-- 5. التذييل: حقوق التطوير ورقم الصفحة الرسمي -->
+        <div class="print-page-footer">
+          <div class="footer-dev">
+            <span class="dev-star">✨</span>
+            <span>تطوير النسخة الإلكترونية : أ/ روان العمري</span>
+          </div>
+          <div class="footer-page-num">
+            <span>صفحة {{ $index + 2 }} من {{ totalObservationPages() + 2 }}</span>
+          </div>
         </div>
       </div>
       }
-
-      <div class="print-footer-credit">
-        تطوير النسخة الإلكترونية : أ/ روان العمري
-      </div>
     </div>
     }
 
@@ -1102,9 +1170,19 @@
         </div>
       </div>
 
-      <!-- 8. تذييل حقوق تطوير النسخة الإلكترونية -->
-      <div class="print-cutoff-credit">
-        تطوير النسخة الإلكترونية : أ/ روان العمري
+      <!-- 8. تذييل حقوق تطوير النسخة الإلكترونية ورقم الصفحة -->
+      <div class="print-cutoff-credit print-page-footer">
+        <div class="footer-dev">
+          <span class="dev-star">✨</span>
+          <span>تطوير النسخة الإلكترونية : أ/ روان العمري</span>
+        </div>
+        <div class="footer-page-num">
+          @if (printMode() === 'all') {
+            <span>صفحة {{ totalObservationPages() + 2 }} من {{ totalObservationPages() + 2 }}</span>
+          } @else {
+            <span>صفحة 1 من 1</span>
+          }
+        </div>
       </div>
     </div>
     }

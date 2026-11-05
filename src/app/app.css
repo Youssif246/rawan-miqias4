@@ -2237,45 +2237,243 @@
     page-break-before: always !important;
     break-before: page !important;
     display: block !important;
-    padding: 10mm 14mm;
+    padding: 0 !important;
+    margin: 0 !important;
     box-sizing: border-box;
   }
 
-  .print-tables-main-heading {
-    margin: 0 0 10px 0 !important;
-    border-bottom: 2px solid #000 !important;
-    padding-bottom: 5px !important;
-    font-size: 13pt !important;
-    font-weight: bold !important;
-    page-break-after: avoid !important;
-    break-after: avoid !important;
+  .pdf-page-block {
+    width: 100%;
+    min-height: 275mm;
+    page-break-after: always !important;
+    break-after: page !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    padding: 10mm 14mm !important;
+    box-sizing: border-box !important;
+    background: #ffffff !important;
   }
 
-  .print-one-domain {
-    page-break-before: always;
-    break-before: page;
+  .print-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
   }
 
-  .print-tables-all > .print-one-domain:first-of-type {
-    page-break-before: avoid !important;
-    break-before: avoid !important;
+  .print-page-header-right {
+    text-align: right;
+    font-size: 8pt;
+    line-height: 1.35;
+    color: #1e293b;
+    font-weight: 700;
   }
 
-  .print-domain-title {
-    margin: 10px 0 5px 0 !important;
-    color: #0f4d31 !important;
-    font-size: 11pt !important;
-    font-weight: bold !important;
-    page-break-after: avoid !important;
-    break-after: avoid !important;
+  .print-page-header-center {
+    text-align: center;
   }
 
-  .print-strand-title {
-    font-weight: bold !important;
-    margin: 6px 0 4px 0 !important;
-    font-size: 9.5pt !important;
-    page-break-after: avoid !important;
-    break-after: avoid !important;
+  .print-header-badge {
+    font-size: 10pt;
+    font-weight: 800;
+    color: #0f4d31;
+  }
+
+  .print-header-sub {
+    font-size: 8pt;
+    color: #475569;
+    font-weight: 600;
+  }
+
+  .print-page-header-left {
+    text-align: left;
+  }
+
+  .page-moe-logo {
+    height: 44px;
+    width: auto;
+    object-fit: contain;
+  }
+
+  .print-page-divider {
+    height: 1.5px;
+    background: linear-gradient(90deg, #0f4d31 0%, #1b8354 50%, #d7ede1 100%);
+    margin: 4px 0 8px 0;
+  }
+
+  .print-page-student-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 5px 12px;
+    margin-bottom: 8px;
+    font-size: 8.5pt;
+  }
+
+  .bar-col {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .bar-lbl {
+    color: #64748b;
+    font-weight: 600;
+  }
+
+  .bar-val {
+    color: #0f172a;
+    font-weight: 700;
+  }
+
+  .bar-val.domain-name {
+    color: #0f4d31;
+  }
+
+  .page-pill {
+    background: #e2e8f0;
+    color: #334155;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 7.5pt;
+    font-weight: 700;
+  }
+
+  .print-page-content {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .print-strand-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    color: #14532d;
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-size: 8.5pt;
+    font-weight: 700;
+    margin: 6px 0 4px 0;
+    width: fit-content;
+  }
+
+  .strand-icon {
+    font-size: 9pt;
+  }
+
+  .is-cutoff-row {
+    background-color: #f8fafc !important;
+  }
+
+  .cutoff-mark {
+    color: #b45309;
+    font-weight: 800;
+    margin-right: 2px;
+  }
+
+  .item-text-cell {
+    font-size: 8.5pt;
+    line-height: 1.35;
+    color: #1e293b;
+  }
+
+  .score-val-highlight {
+    color: #0f4d31;
+    font-size: 9.5pt;
+  }
+
+  .note-text-cell {
+    font-size: 8pt;
+    color: #334155;
+  }
+
+  .note-sym-badge {
+    display: inline-block;
+    background: #e0f2fe;
+    color: #0369a1;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 7.5pt;
+    margin-left: 4px;
+    border: 1px solid #bae6fd;
+  }
+
+  .print-domain-summary-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f8fafc;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 6px 14px;
+    margin-top: 8px;
+    font-size: 8.5pt;
+  }
+
+  .d-sum-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .s-label {
+    color: #475569;
+    font-weight: 600;
+  }
+
+  .s-val {
+    color: #0f172a;
+    font-weight: 700;
+  }
+
+  .s-val.percent {
+    color: #1b8354;
+  }
+
+  .s-val.cutoff {
+    color: #b45309;
+  }
+
+  .print-page-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 6px;
+    border-top: 1px dashed #cbd5e1;
+    font-size: 8pt;
+    color: #64748b;
+    margin-top: auto;
+  }
+
+  .footer-dev {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: 700;
+    color: #0f4d31;
+  }
+
+  .dev-star {
+    font-size: 9pt;
+  }
+
+  .footer-page-num {
+    font-weight: 700;
+    color: #334155;
+  }
+
+  .print-cover-footer {
+    margin-top: 25px;
   }
 
   .print-simple-table {
@@ -2647,21 +2845,41 @@
 }
 
 .pdf-render-box.print-cutoff-form {
-  padding: 10mm 14mm !important;
+  width: 794px !important;
+  height: 1123px !important;
   min-height: 1123px !important;
+  max-height: 1123px !important;
+  padding: 10mm 14mm !important;
+  box-sizing: border-box !important;
   display: flex !important;
   flex-direction: column !important;
   justify-content: space-between !important;
+  background: #ffffff !important;
 }
 
 .pdf-render-box.print-cover-section {
-  padding: 10mm 14mm !important;
+  width: 794px !important;
+  height: 1123px !important;
   min-height: 1123px !important;
+  max-height: 1123px !important;
+  padding: 10mm 14mm !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  background: #ffffff !important;
 }
 
-.pdf-render-box.print-one-domain {
-  padding: 10mm 14mm !important;
+.pdf-render-box.pdf-page-block {
+  width: 794px !important;
+  height: 1123px !important;
   min-height: 1123px !important;
+  max-height: 1123px !important;
+  padding: 10mm 14mm !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
   background: #ffffff !important;
 }
 

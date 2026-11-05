@@ -66,3 +66,19 @@ export interface EligibilityFormData {
   needsIntervention: boolean; // هل يحتاج الطفل إلى خدمات التدخل المبكر
   reportText: string; // نص التقرير
 }
+
+export interface ObservationPrintSection {
+  strandTitle: string;
+  items: AssessmentItem[];
+}
+
+export interface ObservationPrintPage {
+  domainId: string;
+  domainTitle: string;
+  domainIndex: number;
+  pageInDomain: number;
+  totalPagesInDomain: number;
+  sections: ObservationPrintSection[];
+  totalItems: number;
+  isLastPageOfDomain: boolean;
+}
