@@ -4,7 +4,7 @@
     <div class="nav-content">
       <!-- Official Ministry Branding Area -->
       <div class="moe-brand-area">
-        <img src="moe-logo.svg" alt="وزارة التعليم - Ministry of Education" class="moe-official-logo-img">
+        <img [src]="moeLogo" alt="وزارة التعليم - Ministry of Education" class="moe-official-logo-img">
         <div class="moe-brand-divider"></div>
         <div class="moe-brand-titles">
           <span class="gov-title">المملكة العربية السعودية • وزارة التعليم</span>
@@ -549,14 +549,24 @@
             </div>
             <div class="bottom-dual-btns">
               <button type="button" class="btn-moe-success-outline" (click)="setPage(3)">
-                <span>استمارة درجات القطع والأهلية للتدخل المبكر ➔</span>
+                <span>الانتقال إلى درجات القطع والأهلية للتدخل المبكر ➔</span>
               </button>
-              <button type="button" class="btn-moe-primary" (click)="printReport('all')">
+              <button type="button" class="btn-pdf-download" [disabled]="isGeneratingPdf()" (click)="downloadPdf('all')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <line x1="12" y1="18" x2="12" y2="12"></line>
+                  <line x1="9" y1="15" x2="12" y2="18"></line>
+                  <line x1="15" y1="15" x2="12" y2="18"></line>
+                </svg>
+                <span>تحميل التقرير كملف PDF</span>
+              </button>
+              <button type="button" class="btn-moe-outline-print" (click)="printReport('all')">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
                   <path d="M6 14h12v8H6z" />
                 </svg>
-                <span>طباعة / حفظ كملف PDF (التقرير كاملاً)</span>
+                <span>طباعة ورقية</span>
               </button>
             </div>
           </div>
@@ -777,12 +787,22 @@
               <span>‹ العودة إلى جداول الملاحظة والتقييم</span>
             </button>
 
-            <button type="button" class="btn-moe-primary print-btn" (click)="printReport('cutoff-only')">
+            <button type="button" class="btn-pdf-download" [disabled]="isGeneratingPdf()" (click)="downloadPdf('cutoff-only')">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="12" y1="18" x2="12" y2="12"></line>
+                <line x1="9" y1="15" x2="12" y2="18"></line>
+                <line x1="15" y1="15" x2="12" y2="18"></line>
+              </svg>
+              <span>تحميل استمارة درجات القطع كملف PDF</span>
+            </button>
+            <button type="button" class="btn-moe-outline-print" (click)="printReport('cutoff-only')">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
                 <path d="M6 14h12v8H6z" />
               </svg>
-              <span>طباعة / حفظ استمارة درجات القطع (PDF)</span>
+              <span>طباعة ورقية</span>
             </button>
           </div>
         </div>
@@ -806,7 +826,7 @@
           </div>
 
           <div class="letterhead-left">
-            <img src="moe-logo.svg" alt="وزارة التعليم" class="cutoff-moe-logo">
+            <img [src]="moeLogo" alt="وزارة التعليم" class="cutoff-moe-logo">
           </div>
         </div>
 
@@ -969,7 +989,7 @@
         </div>
 
         <div class="letterhead-left">
-          <img src="moe-logo.svg" alt="وزارة التعليم" class="cutoff-moe-logo">
+          <img [src]="moeLogo" alt="وزارة التعليم" class="cutoff-moe-logo">
         </div>
       </div>
 
@@ -1085,6 +1105,17 @@
       <!-- 8. تذييل حقوق تطوير النسخة الإلكترونية -->
       <div class="print-cutoff-credit">
         تطوير النسخة الإلكترونية : أ/ روان العمري
+      </div>
+    </div>
+    }
+
+    <!-- نافذة جاري إنشاء ملف الـ PDF -->
+    @if (isGeneratingPdf()) {
+    <div class="pdf-loading-overlay">
+      <div class="pdf-loading-box">
+        <div class="pdf-spinner"></div>
+        <h3 class="pdf-loading-title">جاري إعداد وتحميل ملف PDF عالي الجودة...</h3>
+        <p class="pdf-loading-desc">{{ pdfProgressText() }}</p>
       </div>
     </div>
     }

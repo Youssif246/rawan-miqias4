@@ -2129,8 +2129,13 @@
   .print-only {
     display: block !important;
   }
+}
 
-  .print-official-header {
+/* ============================================================ */
+/* OFFICIAL PRINT & PDF REPORT TEMPLATES                        */
+/* ============================================================ */
+
+.print-official-header {
     border-bottom: none;
     padding-bottom: 0;
     margin-bottom: 10px;
@@ -2612,8 +2617,165 @@
     page-break-inside: avoid;
     break-inside: avoid;
   }
-}
 
 .print-only {
   display: none;
+}
+
+/* ============================================================ */
+/* PDF EXPORT HOST & RENDER BOX (Native 300 DPI Rendering)      */
+/* ============================================================ */
+
+.pdf-render-host {
+  box-sizing: border-box !important;
+  font-family: 'Tajawal', 'IBM Plex Sans Arabic', sans-serif !important;
+  direction: rtl !important;
+  text-align: right !important;
+  background: #ffffff !important;
+  color: #000000 !important;
+}
+
+.pdf-render-box {
+  display: block !important;
+  width: 794px !important;
+  background: #ffffff !important;
+  color: #000000 !important;
+  box-sizing: border-box !important;
+  font-family: 'Tajawal', 'IBM Plex Sans Arabic', sans-serif !important;
+  direction: rtl !important;
+  text-align: right !important;
+}
+
+.pdf-render-box.print-cutoff-form {
+  padding: 10mm 14mm !important;
+  min-height: 1123px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+}
+
+.pdf-render-box.print-cover-section {
+  padding: 10mm 14mm !important;
+  min-height: 1123px !important;
+}
+
+.pdf-render-box.print-one-domain {
+  padding: 10mm 14mm !important;
+  min-height: 1123px !important;
+  background: #ffffff !important;
+}
+
+/* ============================================================ */
+/* ACTION BUTTONS: HIGH-FIDELITY PDF & PRINT STYLES             */
+/* ============================================================ */
+
+.btn-pdf-download {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  background: linear-gradient(135deg, #0f4d31 0%, #1b8354 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.7rem 1.4rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(15, 77, 49, 0.25);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  letter-spacing: -0.2px;
+}
+
+.btn-pdf-download:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(15, 77, 49, 0.35);
+  background: linear-gradient(135deg, #135d3c 0%, #209963 100%);
+}
+
+.btn-pdf-download:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-pdf-download:disabled {
+  opacity: 0.75;
+  cursor: wait;
+}
+
+.btn-moe-outline-print {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: #ffffff;
+  color: #0f4d31;
+  border: 1.5px solid #0f4d31;
+  border-radius: 8px;
+  padding: 0.65rem 1.25rem;
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-moe-outline-print:hover {
+  background: #edf7f2;
+  border-color: #1b8354;
+  color: #1b8354;
+}
+
+/* ============================================================ */
+/* PDF GENERATION LOADING OVERLAY                               */
+/* ============================================================ */
+
+.pdf-loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(5px);
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.pdf-loading-box {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 2.2rem 2.5rem;
+  max-width: 440px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.3);
+  border: 1.5px solid #d7ede1;
+}
+
+.pdf-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid #e2e8f0;
+  border-top-color: #1b8354;
+  border-right-color: #0f4d31;
+  border-radius: 50%;
+  margin: 0 auto 1.25rem auto;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.pdf-loading-title {
+  color: #0f4d31;
+  font-size: 1.15rem;
+  font-weight: 800;
+  margin: 0 0 0.5rem 0;
+}
+
+.pdf-loading-desc {
+  color: #64748b;
+  font-size: 0.88rem;
+  margin: 0;
+  line-height: 1.5;
 }

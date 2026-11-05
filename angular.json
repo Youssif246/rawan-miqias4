@@ -59,7 +59,16 @@
               "styles": true,
               "fonts": false
             },
-            "index": "src/index.html"
+            "index": "src/index.html",
+            "allowedCommonJsDependencies": [
+              "jspdf",
+              "canvg",
+              "html2canvas",
+              "raf",
+              "rgbcolor",
+              "core-js",
+              "html-to-image"
+            ]
           },
           "configurations": {
             "production": {
@@ -71,8 +80,8 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kB",
-                  "maximumError": "1MB"
+                  "maximumWarning": "2MB",
+                  "maximumError": "3MB"
                 },
                 {
                   "type": "anyComponentStyle",

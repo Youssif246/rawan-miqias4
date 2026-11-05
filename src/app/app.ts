@@ -2,6 +2,9 @@ import { Component, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AssessmentService } from './services/assessment.service';
+import { jsPDF } from 'jspdf';
+import { toJpeg } from 'html-to-image';
+import { MOE_LOGO_BASE64 } from './assets/moe-logo.base64';
 
 @Component({
   selector: 'app-root',
@@ -12,10 +15,13 @@ import { AssessmentService } from './services/assessment.service';
 })
 export class App {
   readonly service = inject(AssessmentService);
+  readonly moeLogo = MOE_LOGO_BASE64;
 
   // 3 Official Stages (بيانات الطفل والتعليمات، جداول الملاحظة والتقييم، استمارة درجات القطع والأهلية):
   readonly currentPage = signal<1 | 2 | 3>(1);
   readonly printMode = signal<'all' | 'cutoff-only'>('all');
+  readonly isGeneratingPdf = signal<boolean>(false);
+  readonly pdfProgressText = signal<string>('جاري تجهيز وتنسيق التقرير...');
 
   // Age preset benchmarks for AEPS cutoff scores
   readonly ageBracketPresets = [
@@ -162,5 +168,152 @@ export class App {
       window.print();
       document.title = prevTitle;
     }, 80);
+  }
+
+  async downloadPdf(mode: 'all' | 'cutoff-only' = 'cutoff-only') {
+    if (this.isGeneratingPdf()) return;
+    this.isGeneratingPdf.set(true);
+    this.pdfProgressText.set('جاري تحضير البيانات وضبط الخطوط الرسمية...');
+
+    try {
+      this.printMode.set(mode);
+      await new Promise(resolve => setTimeout(resolve, 150));
+
+      if ((document as any).fonts?.ready) {
+        await (document as any).fonts.ready;
+      }
+
+      const childName = (this.service.childProfile().childName || 'الطفل').trim().replace(/[\s\/\\:*?"<>|]+/g, '_');
+
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4',
+        compress: true
+      });
+
+      if (mode === 'cutoff-only') {
+        this.pdfProgressText.set('جاري توليد ملف PDF عالي الدقة لاستمارة درجات القطع...');
+        const cutoffEl = document.querySelector('.print-cutoff-form') as HTMLElement;
+        if (!cutoffEl) throw new Error('تعذر العثور على استمارة درجات القطع');
+
+        const { imgData, heightMm } = await this.captureElement(cutoffEl, true);
+        this.addImageToPdf(pdf, imgData, heightMm, true);
+
+        this.pdfProgressText.set('اكتمل التقرير! جاري التحميل...');
+        pdf.save(`تقرير_درجات_القطع_AEPS_${childName}.pdf`);
+      } else {
+        // Multi-page Full Assessment Report
+        this.pdfProgressText.set('جاري إعداد صفحة الغلاف والملخص العام...');
+        const coverEl = document.querySelector('.print-cover-section') as HTMLElement;
+        if (coverEl) {
+          const coverRes = await this.captureElement(coverEl, true);
+          this.addImageToPdf(pdf, coverRes.imgData, coverRes.heightMm, true);
+        }
+
+        const domainEls = Array.from(document.querySelectorAll('.print-one-domain')) as HTMLElement[];
+        for (let i = 0; i < domainEls.length; i++) {
+          this.pdfProgressText.set(`جاري معالجة المجال (${i + 1} من ${domainEls.length})...`);
+          pdf.addPage();
+          const domRes = await this.captureElement(domainEls[i], false);
+          this.addImageToPdf(pdf, domRes.imgData, domRes.heightMm, false);
+        }
+
+        this.pdfProgressText.set('جاري إرفاق استمارة درجات القطع والأهلية...');
+        const cutoffEl = document.querySelector('.print-cutoff-form') as HTMLElement;
+        if (cutoffEl) {
+          pdf.addPage();
+          const cutoffRes = await this.captureElement(cutoffEl, true);
+          this.addImageToPdf(pdf, cutoffRes.imgData, cutoffRes.heightMm, true);
+        }
+
+        this.pdfProgressText.set('اكتمل التقرير كاملاً! جاري التحميل...');
+        pdf.save(`تقرير_ملاحظة_الطفل_AEPS_${childName}.pdf`);
+      }
+    } catch (err) {
+      console.error('PDF Generation Error:', err);
+      alert('حدث خطأ أثناء إنشاء ملف الـ PDF. سيتم فتح نافذة الطباعة كبديل مباشر.');
+      this.printReport(mode);
+    } finally {
+      this.isGeneratingPdf.set(false);
+    }
+  }
+
+  private async captureElement(
+    sourceEl: HTMLElement,
+    isFullPageA4: boolean = false
+  ): Promise<{ imgData: string; widthMm: number; heightMm: number }> {
+    const clone = sourceEl.cloneNode(true) as HTMLElement;
+    clone.classList.remove('print-only');
+    clone.querySelectorAll('.print-only').forEach(el => el.classList.remove('print-only'));
+    clone.classList.add('pdf-render-box');
+    clone.setAttribute('dir', 'rtl');
+    clone.setAttribute('lang', 'ar');
+
+    const host = document.createElement('div');
+    host.className = 'pdf-render-host';
+    host.style.position = 'fixed';
+    host.style.left = '0';
+    host.style.top = '0';
+    host.style.width = '794px';
+    if (isFullPageA4) {
+      host.style.minHeight = '1123px';
+    }
+    host.style.zIndex = '99990';
+    host.style.background = '#ffffff';
+    host.style.pointerEvents = 'none';
+
+    host.appendChild(clone);
+    document.body.appendChild(host);
+
+    try {
+      const images = Array.from(clone.querySelectorAll('img'));
+      await Promise.all(images.map(img => {
+        if (img.complete) return Promise.resolve();
+        return new Promise(res => { img.onload = res; img.onerror = res; });
+      }));
+
+      await new Promise(res => setTimeout(res, 80));
+
+      const targetWidth = 794;
+      const targetHeight = isFullPageA4 ? Math.max(clone.offsetHeight, 1123) : clone.offsetHeight;
+
+      const imgData = await toJpeg(clone, {
+        quality: 0.98,
+        pixelRatio: 2,
+        backgroundColor: '#ffffff',
+        width: targetWidth,
+        height: targetHeight
+      });
+
+      const widthMm = 210;
+      const heightMm = (targetHeight * 210) / targetWidth;
+
+      return { imgData, widthMm, heightMm };
+    } finally {
+      document.body.removeChild(host);
+    }
+  }
+
+  private addImageToPdf(pdf: jsPDF, imgData: string, heightMm: number, forceSinglePage: boolean) {
+    const pageHeight = 297;
+    const pageWidth = 210;
+
+    if (forceSinglePage || heightMm <= pageHeight + 2) {
+      pdf.addImage(imgData, 'JPEG', 0, 0, pageWidth, Math.min(heightMm, pageHeight), undefined, 'FAST');
+    } else {
+      let heightLeft = heightMm;
+      let position = 0;
+
+      pdf.addImage(imgData, 'JPEG', 0, position, pageWidth, heightMm, undefined, 'FAST');
+      heightLeft -= pageHeight;
+
+      while (heightLeft > 5) {
+        position -= pageHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, 'JPEG', 0, position, pageWidth, heightMm, undefined, 'FAST');
+        heightLeft -= pageHeight;
+      }
+    }
   }
 }
