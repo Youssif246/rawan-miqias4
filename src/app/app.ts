@@ -69,57 +69,49 @@ export class App {
   });
 
   readonly paginatedObservationPages = computed<ObservationPrintPage[]>(() => {
-    const pages: ObservationPrintPage[] = [];
-    const domains = this.service.domains;
-    const MAX_PER_PAGE = 18;
+    return this.service.domains.map((dom, domIdx) => {
+      const total = dom.strands.reduce((acc, s) => acc + s.items.length, 0);
+      const isTwoColumn = total > 20;
 
-    domains.forEach((dom, domIdx) => {
-      const allStrandItems: { strandTitle: string; item: AssessmentItem }[] = [];
-      for (const strand of dom.strands) {
-        for (const item of strand.items) {
-          allStrandItems.push({ strandTitle: strand.title, item });
-        }
-      }
+      let columns: ObservationPrintSection[][];
 
-      const totalItems = allStrandItems.length;
-      if (totalItems === 0) return;
-
-      const numPages = Math.ceil(totalItems / MAX_PER_PAGE);
-      const baseSize = Math.floor(totalItems / numPages);
-      const remainder = totalItems % numPages;
-
-      let itemOffset = 0;
-      for (let p = 0; p < numPages; p++) {
-        const countThisPage = baseSize + (p < remainder ? 1 : 0);
-        const slice = allStrandItems.slice(itemOffset, itemOffset + countThisPage);
-        itemOffset += countThisPage;
-
-        const sections: ObservationPrintSection[] = [];
-        let currentSection: ObservationPrintSection | null = null;
-
-        for (const entry of slice) {
-          if (!currentSection || currentSection.strandTitle !== entry.strandTitle) {
-            currentSection = { strandTitle: entry.strandTitle, items: [entry.item] };
-            sections.push(currentSection);
-          } else {
-            currentSection.items.push(entry.item);
+      if (!isTwoColumn) {
+        // Single column for domains with <= 20 items (Domain 1 & Domain 2)
+        columns = [
+          dom.strands.map(s => ({ strandTitle: s.title, items: s.items }))
+        ];
+      } else {
+        // Optimal split between 2 columns by whole strands without breaking any strand
+        let bestDiff = Infinity;
+        let bestIdx = 1;
+        let running = 0;
+        for (let i = 0; i < dom.strands.length - 1; i++) {
+          running += dom.strands[i].items.length;
+          const diff = Math.abs(running - (total - running));
+          if (diff < bestDiff) {
+            bestDiff = diff;
+            bestIdx = i + 1;
           }
         }
 
-        pages.push({
-          domainId: dom.id,
-          domainTitle: dom.title,
-          domainIndex: domIdx,
-          pageInDomain: p + 1,
-          totalPagesInDomain: numPages,
-          sections,
-          totalItems: countThisPage,
-          isLastPageOfDomain: p === numPages - 1
-        });
-      }
-    });
+        const col1Strands = dom.strands.slice(0, bestIdx);
+        const col2Strands = dom.strands.slice(bestIdx);
 
-    return pages;
+        columns = [
+          col1Strands.map(s => ({ strandTitle: s.title, items: s.items })),
+          col2Strands.map(s => ({ strandTitle: s.title, items: s.items }))
+        ];
+      }
+
+      return {
+        domainId: dom.id,
+        domainTitle: dom.title,
+        domainIndex: domIdx,
+        isTwoColumn,
+        columns,
+        totalItems: total
+      };
+    });
   });
 
   readonly totalObservationPages = computed<number>(() => this.paginatedObservationPages().length);

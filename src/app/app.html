@@ -918,12 +918,12 @@
     }
 
     <!-- ============================================== -->
-    <!-- جداول الطباعة التفصيلية (صفحات مقسمة A4 متناسقة) -->
+    <!-- جداول الطباعة التفصيلية (صفحة منفردة لكل مجال A4) -->
     <!-- ============================================== -->
     @if (printMode() !== 'cutoff-only') {
     <div class="page-break-forced print-only"></div>
     <div class="print-tables-all print-only">
-      @for (page of paginatedObservationPages(); track $index) {
+      @for (page of paginatedObservationPages(); track page.domainId) {
       <div class="pdf-page-block print-only">
         <!-- 1. ترويسة الصفحة الرسمية: وزارة التعليم والشعار -->
         <div class="print-page-header">
@@ -936,7 +936,7 @@
 
           <div class="print-page-header-center">
             <div class="print-header-badge">نظام القياس والتقويم والبرمجة (AEPS)</div>
-            <div class="print-header-sub">استمارة تسجيل بيانات ملاحظة الطفل</div>
+            <div class="print-header-sub">استمارة تسجيل بيانات ملاحظة الطفل الرسمية</div>
           </div>
 
           <div class="print-page-header-left">
@@ -960,58 +960,106 @@
             <span class="bar-lbl">تاريخ التقييم:</span>
             <strong class="bar-val">{{ service.childProfile().assessmentDate || '—' }}</strong>
           </div>
-          <div class="bar-col page-badge-col">
-            <span class="page-pill">صفحة {{ page.pageInDomain }} من {{ page.totalPagesInDomain }} بالمجال</span>
+          <div class="bar-col">
+            <span class="bar-lbl">الفاحص:</span>
+            <strong class="bar-val">{{ service.childProfile().formFiller || '—' }}</strong>
           </div>
         </div>
 
-        <!-- 3. المحتوى: أقسام ومفردات المجال وجداول الملاحظة -->
-        <div class="print-page-content">
-          @for (section of page.sections; track section.strandTitle) {
-          <div class="print-strand-badge">
-            <span class="strand-icon">📌</span>
-            <span>{{ section.strandTitle }}</span>
-          </div>
+        <!-- 3. المحتوى: الجداول إما عمودين أو عمود واحد حسب حجم المجال -->
+        <div class="print-page-content" [class.is-two-col]="page.isTwoColumn">
+          @if (page.isTwoColumn) {
+          <div class="print-columns-grid">
+            @for (colSections of page.columns; track $index) {
+            <div class="print-grid-col">
+              @for (section of colSections; track section.strandTitle) {
+              <div class="print-strand-badge">
+                <span class="strand-title-text">{{ section.strandTitle }}</span>
+              </div>
 
-          <table class="print-simple-table">
-            <thead>
-              <tr>
-                <th style="width: 50px; text-align: center;">الرقم</th>
-                <th>المفردة / المحك والهدف المعتمد</th>
-                <th style="width: 60px; text-align: center;">الدرجة (د)</th>
-                <th style="width: 140px;">الملحوظات (ل)</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (item of section.items; track item.id) {
-              <tr [class.is-cutoff-row]="item.isCutoff">
-                <td style="text-align: center; font-weight: bold;">
-                  {{ item.itemNumber }}
-                  @if (item.isCutoff) { <span class="cutoff-mark">(ص)</span> }
-                </td>
-                <td class="item-text-cell">
-                  {{ item.text }}
-                </td>
-                <td style="text-align: center; font-weight: bold;" [class.score-val-highlight]="getScore(item.id) !== null">
-                  {{ getScore(item.id) !== null ? getScore(item.id) : '-' }}
-                </td>
-                <td class="note-text-cell">
-                  @if (service.evaluations()[item.id]?.noteSymbol) {
-                    <span class="note-sym-badge">{{ service.evaluations()[item.id]?.noteSymbol }}</span>
+              <table class="print-compact-table">
+                <thead>
+                  <tr>
+                    <th style="width: 30px; text-align: center;">الرقم</th>
+                    <th>المفردة / المحك والهدف المعتمد</th>
+                    <th style="width: 32px; text-align: center;">الدرجة</th>
+                    <th style="width: 70px;">الملحوظات</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (item of section.items; track item.id) {
+                  <tr [class.is-cutoff-row]="item.isCutoff">
+                    <td class="td-num">
+                      {{ item.itemNumber }}
+                      @if (item.isCutoff) { <span class="cutoff-mark">(ص)</span> }
+                    </td>
+                    <td class="td-text">
+                      {{ item.text }}
+                    </td>
+                    <td class="td-score" [class.has-score]="getScore(item.id) !== null">
+                      {{ getScore(item.id) !== null ? getScore(item.id) : '-' }}
+                    </td>
+                    <td class="td-note">
+                      @if (service.evaluations()[item.id]?.noteSymbol) {
+                        <span class="note-sym-badge">{{ service.evaluations()[item.id]?.noteSymbol }}</span>
+                      }
+                      {{ getNote(item.id) }}
+                    </td>
+                  </tr>
                   }
-                  {{ getNote(item.id) }}
-                </td>
-              </tr>
+                </tbody>
+              </table>
               }
-            </tbody>
-          </table>
+            </div>
+            }
+          </div>
+          } @else {
+          <div class="print-single-col-wrap">
+            @for (section of page.columns[0]; track section.strandTitle) {
+            <div class="print-strand-badge single-col-badge">
+              <span class="strand-title-text">{{ section.strandTitle }}</span>
+            </div>
+
+            <table class="print-simple-table">
+              <thead>
+                <tr>
+                  <th style="width: 48px; text-align: center;">الرقم</th>
+                  <th>المفردة / المحك والهدف المعتمد</th>
+                  <th style="width: 55px; text-align: center;">الدرجة (د)</th>
+                  <th style="width: 130px;">الملحوظات (ل)</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of section.items; track item.id) {
+                <tr [class.is-cutoff-row]="item.isCutoff">
+                  <td style="text-align: center; font-weight: bold;">
+                    {{ item.itemNumber }}
+                    @if (item.isCutoff) { <span class="cutoff-mark">(ص)</span> }
+                  </td>
+                  <td class="item-text-cell">
+                    {{ item.text }}
+                  </td>
+                  <td style="text-align: center; font-weight: bold;" [class.score-val-highlight]="getScore(item.id) !== null">
+                    {{ getScore(item.id) !== null ? getScore(item.id) : '-' }}
+                  </td>
+                  <td class="note-text-cell">
+                    @if (service.evaluations()[item.id]?.noteSymbol) {
+                      <span class="note-sym-badge">{{ service.evaluations()[item.id]?.noteSymbol }}</span>
+                    }
+                    {{ getNote(item.id) }}
+                  </td>
+                </tr>
+                }
+              </tbody>
+            </table>
+            }
+          </div>
           }
 
-          <!-- 4. ملخص درجات المجال (في الصفحة الأخيرة من كل مجال فقط) -->
-          @if (page.isLastPageOfDomain) {
+          <!-- 4. ملخص درجات المجال الرسمي في أسفل الصفحة -->
           <div class="print-domain-summary-card">
             <div class="d-sum-item">
-              <span class="s-label">الدرجة الخام للمجال:</span>
+              <span class="s-label">الدرجة الخام المحققة للمجال:</span>
               <strong class="s-val">{{ service.domainCalculations()[page.domainIndex].totalScore }} / {{ service.domainCalculations()[page.domainIndex].maxScore }}</strong>
             </div>
             <div class="d-sum-item">
@@ -1023,7 +1071,6 @@
               <strong class="s-val cutoff">{{ service.domainCalculations()[page.domainIndex].cutoffScore }}</strong>
             </div>
           </div>
-          }
         </div>
 
         <!-- 5. التذييل: حقوق التطوير ورقم الصفحة الرسمي -->
