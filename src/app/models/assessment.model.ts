@@ -76,7 +76,9 @@ export interface ObservationPrintPage {
   domainId: string;
   domainTitle: string;
   domainIndex: number;
-  isTwoColumn: boolean;
-  columns: ObservationPrintSection[][];
+  pageInDomain: number;
+  totalPagesInDomain: number;
+  isLastPageOfDomain: boolean;
+  sections: ObservationPrintSection[];
   totalItems: number;
 }

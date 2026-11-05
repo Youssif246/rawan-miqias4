@@ -69,49 +69,48 @@ export class App {
   });
 
   readonly paginatedObservationPages = computed<ObservationPrintPage[]>(() => {
-    return this.service.domains.map((dom, domIdx) => {
-      const total = dom.strands.reduce((acc, s) => acc + s.items.length, 0);
-      const isTwoColumn = total > 20;
+    const pages: ObservationPrintPage[] = [];
 
-      let columns: ObservationPrintSection[][];
+    this.service.domains.forEach((dom, domIdx) => {
+      const domPages: (typeof dom.strands)[] = [];
+      let curPageStrands: typeof dom.strands = [];
+      let curPageItems = 0;
 
-      if (!isTwoColumn) {
-        // Single column for domains with <= 20 items (Domain 1 & Domain 2)
-        columns = [
-          dom.strands.map(s => ({ strandTitle: s.title, items: s.items }))
-        ];
-      } else {
-        // Optimal split between 2 columns by whole strands without breaking any strand
-        let bestDiff = Infinity;
-        let bestIdx = 1;
-        let running = 0;
-        for (let i = 0; i < dom.strands.length - 1; i++) {
-          running += dom.strands[i].items.length;
-          const diff = Math.abs(running - (total - running));
-          if (diff < bestDiff) {
-            bestDiff = diff;
-            bestIdx = i + 1;
-          }
+      // Group whole strands onto a page (either 1 large strand, or 2-3 shorter strands)
+      const MAX_COMBINED_PER_PAGE = 27;
+
+      dom.strands.forEach((strand) => {
+        const count = strand.items.length;
+        if (curPageStrands.length > 0 && (curPageItems + count > MAX_COMBINED_PER_PAGE)) {
+          domPages.push(curPageStrands);
+          curPageStrands = [strand];
+          curPageItems = count;
+        } else {
+          curPageStrands.push(strand);
+          curPageItems += count;
         }
+      });
 
-        const col1Strands = dom.strands.slice(0, bestIdx);
-        const col2Strands = dom.strands.slice(bestIdx);
-
-        columns = [
-          col1Strands.map(s => ({ strandTitle: s.title, items: s.items })),
-          col2Strands.map(s => ({ strandTitle: s.title, items: s.items }))
-        ];
+      if (curPageStrands.length > 0) {
+        domPages.push(curPageStrands);
       }
 
-      return {
-        domainId: dom.id,
-        domainTitle: dom.title,
-        domainIndex: domIdx,
-        isTwoColumn,
-        columns,
-        totalItems: total
-      };
+      domPages.forEach((strandsOnPage, pIdx) => {
+        const totalItems = strandsOnPage.reduce((a, s) => a + s.items.length, 0);
+        pages.push({
+          domainId: dom.id,
+          domainTitle: dom.title,
+          domainIndex: domIdx,
+          pageInDomain: pIdx + 1,
+          totalPagesInDomain: domPages.length,
+          isLastPageOfDomain: pIdx === domPages.length - 1,
+          sections: strandsOnPage.map(s => ({ strandTitle: s.title, items: s.items })),
+          totalItems
+        });
+      });
     });
+
+    return pages;
   });
 
   readonly totalObservationPages = computed<number>(() => this.paginatedObservationPages().length);
