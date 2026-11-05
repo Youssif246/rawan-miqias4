@@ -94,8 +94,8 @@ input, select, textarea {
 /* Print Rules */
 @media print {
   @page {
-    size: A4;
-    margin: 1cm;
+    size: A4 portrait;
+    margin: 0;
   }
   
   body {
