@@ -549,29 +549,14 @@
             </div>
             <div class="bottom-dual-btns">
               <button type="button" class="btn-moe-success-outline" (click)="setPage(3)">
-                <span>الانتقال إلى درجات القطع والأهلية للتدخل المبكر ➔</span>
+                <span>استمارة درجات القطع والأهلية للتدخل المبكر ➔</span>
               </button>
-              <button type="button" class="btn-pdf-download" [disabled]="isGeneratingPdf()" (click)="downloadPdf('all')">
-                @if (isGeneratingPdf()) {
-                  <span class="btn-spinner"></span>
-                  <span>جاري إنشاء PDF...</span>
-                } @else {
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                    <polyline points="14 2 14 8 20 8"></polyline>
-                    <line x1="12" y1="18" x2="12" y2="12"></line>
-                    <line x1="9" y1="15" x2="12" y2="18"></line>
-                    <line x1="15" y1="15" x2="12" y2="18"></line>
-                  </svg>
-                  <span>تحميل التقرير كملف PDF</span>
-                }
-              </button>
-              <button type="button" class="btn-moe-outline-print" (click)="printReport('all')">
+              <button type="button" class="btn-moe-primary" (click)="printReport('all')">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
                   <path d="M6 14h12v8H6z" />
                 </svg>
-                <span>طباعة ورقية</span>
+                <span>طباعة الاستمارة الرسمية والتقرير</span>
               </button>
             </div>
           </div>
@@ -792,28 +777,12 @@
               <span>‹ العودة إلى جداول الملاحظة والتقييم</span>
             </button>
 
-            <button type="button" class="btn-pdf-download" [disabled]="isGeneratingPdf()" (click)="downloadPdf('cutoff-only')">
-              @if (isGeneratingPdf()) {
-                <span class="btn-spinner"></span>
-                <span>جاري إنشاء PDF...</span>
-              } @else {
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                  <polyline points="14 2 14 8 20 8"></polyline>
-                  <line x1="12" y1="18" x2="12" y2="12"></line>
-                  <line x1="9" y1="15" x2="12" y2="18"></line>
-                  <line x1="15" y1="15" x2="12" y2="18"></line>
-                </svg>
-                <span>تحميل استمارة درجات القطع كملف PDF</span>
-              }
-            </button>
-
-            <button type="button" class="btn-moe-outline-print" (click)="printReport('cutoff-only')">
+            <button type="button" class="btn-moe-primary print-btn" (click)="printReport('cutoff-only')">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
                 <path d="M6 14h12v8H6z" />
               </svg>
-              <span>طباعة ورقية</span>
+              <span>طباعة استمارة درجات القطع الرسمية (A4)</span>
             </button>
           </div>
         </div>
@@ -823,12 +792,10 @@
     }
 
     <!-- ============================================== -->
-    <!-- منطقة التقرير القابلة للطباعة وتصدير PDF        -->
+    <!-- صفحة الغلاف والملخص الرسمي المطبوع (Print Cover)-->
     <!-- ============================================== -->
-    <div id="print-area">
-      <!-- صفحة الغلاف والملخص الرسمي المطبوع (Print Cover)-->
-      @if (printMode() !== 'cutoff-only') {
-      <div class="print-cover-section print-only">
+    @if (printMode() !== 'cutoff-only') {
+    <div class="print-cover-section print-only">
       <div class="print-official-header">
         <div class="print-cutoff-letterhead">
           <div class="letterhead-right">
@@ -1118,18 +1085,6 @@
       <!-- 8. تذييل حقوق تطوير النسخة الإلكترونية -->
       <div class="print-cutoff-credit">
         تطوير النسخة الإلكترونية : أ/ روان العمري
-      </div>
-    </div>
-    }
-    </div> <!-- /#print-area -->
-
-    <!-- نافذة جاري إنشاء ملف الـ PDF -->
-    @if (isGeneratingPdf()) {
-    <div class="pdf-loading-overlay">
-      <div class="pdf-loading-box">
-        <div class="pdf-spinner"></div>
-        <h3 class="pdf-loading-title">جاري إعداد وتحميل ملف PDF عالي الجودة...</h3>
-        <p class="pdf-loading-desc">يتم تنسيق الجداول والخطوط والترويسة الرسمية وفقاً لمعايير وزارة التعليم</p>
       </div>
     </div>
     }
