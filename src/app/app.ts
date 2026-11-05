@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AssessmentService } from './services/assessment.service';
 
+declare const html2pdf: any;
+
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -16,6 +18,7 @@ export class App {
   // 3 Official Stages (بيانات الطفل والتعليمات، جداول الملاحظة والتقييم، استمارة درجات القطع والأهلية):
   readonly currentPage = signal<1 | 2 | 3>(1);
   readonly printMode = signal<'all' | 'cutoff-only'>('all');
+  readonly isGeneratingPdf = signal<boolean>(false);
 
   // Age preset benchmarks for AEPS cutoff scores
   readonly ageBracketPresets = [
@@ -162,5 +165,88 @@ export class App {
       window.print();
       document.title = prevTitle;
     }, 80);
+  }
+
+  async downloadPdf(mode: 'all' | 'cutoff-only' = 'cutoff-only') {
+    if (this.isGeneratingPdf()) return;
+    this.isGeneratingPdf.set(true);
+
+    this.printMode.set(mode);
+    await new Promise(resolve => setTimeout(resolve, 150));
+
+    try {
+      if ((document as any).fonts?.ready) {
+        await (document as any).fonts.ready;
+      }
+
+      const selector = mode === 'cutoff-only' ? '.print-cutoff-form' : '#print-area';
+      const targetEl = document.querySelector(selector) as HTMLElement;
+      if (!targetEl) {
+        alert('تعذر العثور على محتوى التقرير للتحميل.');
+        this.isGeneratingPdf.set(false);
+        return;
+      }
+
+      // Clone element to avoid modifying the on-screen DOM
+      const clone = targetEl.cloneNode(true) as HTMLElement;
+      clone.classList.remove('print-only');
+      clone.classList.add('pdf-export-active');
+      clone.querySelectorAll('.print-only').forEach(el => el.classList.remove('print-only'));
+
+      clone.style.position = 'fixed';
+      clone.style.left = '0';
+      clone.style.top = '0';
+      clone.style.width = '794px';
+      clone.style.background = '#ffffff';
+      clone.style.zIndex = '-9999';
+      clone.style.pointerEvents = 'none';
+      document.body.appendChild(clone);
+
+      const images = Array.from(clone.querySelectorAll('img'));
+      await Promise.all(images.map(img => {
+        if (img.complete) return Promise.resolve();
+        return new Promise(res => { img.onload = res; img.onerror = res; });
+      }));
+
+      await new Promise(resolve => setTimeout(resolve, 300));
+
+      const childName = (this.service.childProfile().childName || 'الطفل').trim().replace(/[\s\/\\:*?"<>|]+/g, '_');
+      const filename = mode === 'cutoff-only'
+        ? `تقرير_درجات_القطع_AEPS_${childName}.pdf`
+        : `تقرير_ملاحظة_الطفل_AEPS_${childName}.pdf`;
+
+      const opt = {
+        margin: 0,
+        filename: filename,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: {
+          scale: 2,
+          useCORS: true,
+          letterRendering: true,
+          backgroundColor: '#ffffff',
+          scrollY: 0,
+          scrollX: 0
+        },
+        jsPDF: {
+          unit: 'mm',
+          format: 'a4',
+          orientation: 'portrait'
+        },
+        pagebreak: { mode: ['css', 'legacy'] }
+      };
+
+      if (typeof html2pdf !== 'undefined') {
+        await html2pdf().set(opt).from(clone).save();
+      } else {
+        window.print();
+      }
+
+      document.body.removeChild(clone);
+    } catch (err) {
+      console.error('PDF Generation Error:', err);
+      window.print();
+    } finally {
+      this.isGeneratingPdf.set(false);
+    }
   }
 }
