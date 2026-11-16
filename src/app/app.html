@@ -594,7 +594,7 @@
         <div class="cutoff-meta-grid">
           <div class="c-meta-item">
             <label>اسم الطفل :</label>
-            <input type="text" class="c-meta-input bold" placeholder="اسم الطفل..."
+            <input type="text" class="c-meta-input bold" placeholder="مثال: طلال العلواني"
               [ngModel]="service.childProfile().childName" (ngModelChange)="service.updateProfile('childName', $event)">
           </div>
 
@@ -628,8 +628,8 @@
           </span>
           <div class="preset-chips">
             @for (preset of ageBracketPresets; track preset.label) {
-            <button type="button" class="btn-preset-chip" (click)="applyAgePreset(preset)"
-              title="تطبيق درجات القطع لهذه الشريحة">
+            <button type="button" class="btn-preset-chip" [class.active]="selectedAgePreset() === preset.label"
+              (click)="applyAgePreset(preset)" title="تطبيق درجات القطع لهذه الشريحة">
               {{ preset.label }}
             </button>
             }
@@ -653,7 +653,6 @@
                 <td class="td-row-header">
                   <div class="row-header-content">
                     <strong>درجة الأهداف العامة للمجالات للطفل</strong>
-                    <span class="auto-tag-hint">✨ محسوبة تلقائياً من المقياس</span>
                   </div>
                 </td>
                 @for (row of service.eligibilityComparison(); track row.domainId) {
@@ -662,9 +661,6 @@
                     <input type="number" step="0.5" class="cutoff-num-input" [ngModel]="row.childScore"
                       (ngModelChange)="service.updateCustomChildScore(row.domainId, $event)"
                       [title]="'الدرجة التلقائية من بنود (ص): ' + row.autoScore">
-                    @if (row.isCustomScore) {
-                    <span class="custom-badge" title="تم تعديلها يدوياً">معدلة</span>
-                    }
                   </div>
                 </td>
                 }
@@ -675,7 +671,6 @@
                 <td class="td-row-header">
                   <div class="row-header-content">
                     <strong>درجة القطع للشريحة العمرية</strong>
-                    <span class="auto-tag-hint">✏️ قابلة للتعديل بحسب عمر الطفل</span>
                   </div>
                 </td>
                 @for (row of service.eligibilityComparison(); track row.domainId) {
@@ -693,7 +688,6 @@
                 <td class="td-row-header">
                   <div class="row-header-content">
                     <strong>ملاحظات</strong>
-                    <span class="auto-tag-hint">تحديد استحقاق التدخل المبكر</span>
                   </div>
                 </td>
                 @for (row of service.eligibilityComparison(); track row.domainId) {
@@ -701,10 +695,6 @@
                   <div class="note-input-container">
                     <input type="text" class="cutoff-note-input" [class.danger-note]="row.isUnderCutoff"
                       [ngModel]="row.note" (ngModelChange)="service.updateCustomNote(row.domainId, $event)">
-                    @if (row.isUnderCutoff) {
-                    <span class="intervention-indicator" title="أقل من درجة القطع: يستوجب التدخل المبكر">⚠️ أقل من
-                      المحك</span>
-                    }
                   </div>
                 </td>
                 }
@@ -718,8 +708,8 @@
           <span class="decision-label">هل يحتاج الطفل الى خدمات التدخل المبكر :</span>
           <div class="decision-radios">
             <button type="button" class="btn-decision-pill"
-              [class.active-yes]="service.eligibilityForm().needsIntervention === true"
-              (click)="service.updateEligibilityField('needsIntervention', true)">
+              [class.active-yes]="service.effectiveNeedsIntervention() === true"
+              (click)="service.setManualNeedsIntervention(true)">
               <span class="dec-circle">
                 <span class="dec-inner"></span>
               </span>
@@ -727,8 +717,8 @@
             </button>
 
             <button type="button" class="btn-decision-pill"
-              [class.active-no]="service.eligibilityForm().needsIntervention === false"
-              (click)="service.updateEligibilityField('needsIntervention', false)">
+              [class.active-no]="service.effectiveNeedsIntervention() === false"
+              (click)="service.setManualNeedsIntervention(false)">
               <span class="dec-circle">
                 <span class="dec-inner"></span>
               </span>
@@ -749,8 +739,8 @@
             </button>
           </div>
           <textarea rows="4" class="report-textarea" placeholder="اكتب تقرير الأهلية لخدمات التدخل المبكر..."
-            [ngModel]="service.eligibilityForm().reportText"
-            (ngModelChange)="service.updateEligibilityField('reportText', $event)"></textarea>
+            [ngModel]="service.effectiveReportText()"
+            (ngModelChange)="service.setReportText($event)"></textarea>
         </div>
 
         <!-- Signatures & Evaluator Footer -->
@@ -1127,11 +1117,11 @@
       <div class="print-cutoff-decision">
         <span class="decision-prompt">هل يحتاج الطفل إلى خدمات التدخل المبكر :</span>
         <span class="checkbox-option">
-          <span class="box-icon">{{ service.eligibilityForm().needsIntervention ? '☑' : '☐' }}</span>
+          <span class="box-icon">{{ service.effectiveNeedsIntervention() ? '☑' : '☐' }}</span>
           <span class="box-txt">نعم</span>
         </span>
         <span class="checkbox-option">
-          <span class="box-icon">{{ !service.eligibilityForm().needsIntervention ? '☑' : '☐' }}</span>
+          <span class="box-icon">{{ !service.effectiveNeedsIntervention() ? '☑' : '☐' }}</span>
           <span class="box-txt">لا</span>
         </span>
       </div>
@@ -1140,7 +1130,7 @@
       <div class="print-cutoff-report-section">
         <div class="report-lead">التقرير :</div>
         <div class="report-box-content">
-          {{ service.eligibilityForm().reportText }}
+          {{ service.effectiveReportText() }}
         </div>
       </div>
 

@@ -1760,9 +1760,11 @@
   transition: all 0.15s ease;
 }
 
-.btn-preset-chip:hover {
+.btn-preset-chip:hover,
+.btn-preset-chip.active {
   background: #166534;
   color: #ffffff;
+  border-color: #166534;
 }
 
 /* Cutoff Table */

@@ -1379,7 +1379,8 @@ export const ASSESSMENT_DOMAINS: AssessmentDomain[] = [
             "maxScore": 2,
             "subItemIds": [
               "domain_4_item_50",
-              "domain_4_item_51"
+              "domain_4_item_51",
+              "domain_4_item_51_2"
             ]
           },
           {
@@ -1398,6 +1399,16 @@ export const ASSESSMENT_DOMAINS: AssessmentDomain[] = [
             "paperNumber": "2-2",
             "text": "ينطق الكلمات",
             "raw": "2-2 ينطق الكلمات",
+            "isCutoff": false,
+            "maxScore": 2,
+            "parentItemId": "domain_4_item_49"
+          },
+          {
+            "id": "domain_4_item_51_2",
+            "itemNumber": "2.3",
+            "paperNumber": "2-3",
+            "text": "ينتج الأصوات الصحيحة للحروف",
+            "raw": "2-3 ينتج الأصوات الصحيحة للحروف",
             "isCutoff": false,
             "maxScore": 2,
             "parentItemId": "domain_4_item_49"

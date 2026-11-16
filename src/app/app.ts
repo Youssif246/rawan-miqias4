@@ -31,7 +31,10 @@ export class App {
     { label: 'شريحة 36 - 47 شهراً (3 إلى 4 سنوات)', values: { domain_1: 4.5, domain_2: 5.5, domain_3: 6.5, domain_4: 14, domain_6: 11 } }
   ];
 
+  readonly selectedAgePreset = signal<string>(this.ageBracketPresets[0].label);
+
   applyAgePreset(preset: typeof this.ageBracketPresets[0]) {
+    this.selectedAgePreset.set(preset.label);
     for (const [domId, val] of Object.entries(preset.values)) {
       this.service.updateBenchmark(domId, val);
     }

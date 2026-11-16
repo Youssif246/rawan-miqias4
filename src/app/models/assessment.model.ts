@@ -63,8 +63,10 @@ export interface EligibilityFormData {
   benchmarks: Record<string, number>; // درجات القطع للشريحة العمرية لكل مجال
   customChildScores: Record<string, number | null>; // درجات الطفل المعدلة يدوياً إن رغب
   customNotes: Record<string, string>; // الملاحظات لكل مجال
-  needsIntervention: boolean; // هل يحتاج الطفل إلى خدمات التدخل المبكر
-  reportText: string; // نص التقرير
+  needsIntervention?: boolean; // هل يحتاج الطفل إلى خدمات التدخل المبكر
+  customNeedsIntervention?: boolean | null; // تعديل يدوي لخيار التدخل
+  reportText?: string; // نص التقرير
+  customReportText?: string | null; // تعديل يدوي لنص التقرير
 }
 
 export interface ObservationPrintSection {

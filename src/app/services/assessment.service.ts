@@ -61,7 +61,9 @@ export class AssessmentService {
     },
     customChildScores: {},
     customNotes: {},
+    customNeedsIntervention: null,
     needsIntervention: true,
+    customReportText: null,
     reportText: this.DEFAULT_REPORT_TEXT
   });
 
@@ -95,6 +97,49 @@ export class AssessmentService {
         note
       };
     });
+  });
+
+  // Dynamic Standard Report Text based on the actual domain comparison
+  readonly dynamicStandardReportText = computed(() => {
+    const rows = this.eligibilityComparison();
+    const underCutoffRows = rows.filter(r => r.isUnderCutoff);
+    const total = rows.length; // 5
+
+    if (underCutoffRows.length === total) {
+      // All 5 domains under cutoff (exact AEPS manual standard for all-under):
+      return 'تكشف هذه المقارنات أن درجات الأهداف العامة للمجالات للطفل أدنى من درجات القطع في كل المجالات النمائية الخمس التي يقيمها اختبار نظام القياس والتقويم والبرمجة ومن المرجح جداً أن يكون أداؤه أدنى بصورة ملحوظة من أقرانه في العمر الزمني ولذلك يستحق تلقي خدمات التدخل المبكر';
+    } else if (underCutoffRows.length > 0) {
+      // Specific domains under cutoff:
+      const domainNames = underCutoffRows.map(r => r.title).join('، ');
+      return `تكشف هذه المقارنات أن درجات الأهداف العامة للمجالات للطفل أدنى من درجات القطع في: (${domainNames}) التي يقيمها اختبار نظام القياس والتقويم والبرمجة ومن المرجح جداً أن يكون أداؤه أدنى بصورة ملحوظة من أقرانه في العمر الزمني في هذه المجالات ولذلك يستحق تلقي خدمات التدخل المبكر`;
+    } else {
+      // None under cutoff:
+      return 'تكشف هذه المقارنات أن درجات الأهداف العامة للمجالات للطفل ضمن النطاق الملائم وأعلى من درجات القطع في كافة المجالات النمائية الخمس التي يقيمها اختبار نظام القياس والتقويم والبرمجة ومن غير المرجح أن يكون أداؤه أدنى بصورة ملحوظة من أقرانه في العمر الزمني ولذلك لا يستحق تلقي خدمات التدخل المبكر';
+    }
+  });
+
+  // Dynamic automatic intervention recommendation
+  readonly autoNeedsIntervention = computed(() => {
+    const rows = this.eligibilityComparison();
+    return rows.some(r => r.isUnderCutoff);
+  });
+
+  // Effective report text: custom if explicitly modified by evaluator, otherwise dynamic standard
+  readonly effectiveReportText = computed(() => {
+    const form = this.eligibilityForm();
+    if (form.customReportText !== undefined && form.customReportText !== null && form.customReportText.trim() !== '') {
+      return form.customReportText;
+    }
+    return this.dynamicStandardReportText();
+  });
+
+  // Effective intervention decision: custom if explicitly clicked by evaluator, otherwise auto
+  readonly effectiveNeedsIntervention = computed(() => {
+    const form = this.eligibilityForm();
+    if (form.customNeedsIntervention !== undefined && form.customNeedsIntervention !== null) {
+      return form.customNeedsIntervention;
+    }
+    return this.autoNeedsIntervention();
   });
 
   constructor() {
@@ -344,10 +389,27 @@ export class AssessmentService {
     }));
   }
 
+  setManualNeedsIntervention(val: boolean) {
+    this.eligibilityForm.update(prev => ({
+      ...prev,
+      customNeedsIntervention: val,
+      needsIntervention: val
+    }));
+  }
+
+  setReportText(text: string) {
+    this.eligibilityForm.update(prev => ({
+      ...prev,
+      customReportText: text,
+      reportText: text
+    }));
+  }
+
   resetReportText() {
     this.eligibilityForm.update(prev => ({
       ...prev,
-      reportText: this.DEFAULT_REPORT_TEXT
+      customReportText: null,
+      reportText: this.dynamicStandardReportText()
     }));
   }
 
@@ -375,7 +437,9 @@ export class AssessmentService {
       },
       customChildScores: {},
       customNotes: {},
+      customNeedsIntervention: null,
       needsIntervention: true,
+      customReportText: null,
       reportText: this.DEFAULT_REPORT_TEXT
     });
     this.activeDomainId.set(this.domains[0]?.id || '');
