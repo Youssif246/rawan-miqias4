@@ -38,12 +38,13 @@ export class AssessmentService {
   readonly DEFAULT_REPORT_TEXT =
     'تكشف هذه المقارنات أن درجات الأهداف العامة للمجالات للطفل أدنى من درجات القطع في كل المجالات النمائية الخمس التي يقيمها اختبار نظام القياس والتقويم والبرمجة ومن المرجح جداً أن يكون أداؤه أدنى بصورة ملحوظة من أقرانه في العمر الزمني ولذلك يستحق تلقي خدمات التدخل المبكر';
 
-  // 5 Standard Developmental Domains for Cutoff Eligibility Report
+  // 6 Standard Developmental Domains for Cutoff Eligibility Report (Matching Table 1, Page 348 of AEPS Manual)
   readonly eligibilityDomainDefs = [
     { domainId: 'domain_1', title: 'مجال الحركات الدقيقة', defaultBenchmark: 6.5 },
     { domainId: 'domain_2', title: 'مجال الحركات الكبيرة', defaultBenchmark: 8 },
     { domainId: 'domain_3', title: 'المجال التكيفي', defaultBenchmark: 9.5 },
     { domainId: 'domain_4', title: 'المجال المعرفي', defaultBenchmark: 22 },
+    { domainId: 'domain_5', title: 'مجال التواصل الاجتماعي', defaultBenchmark: 12 },
     { domainId: 'domain_6', title: 'المجال الاجتماعي', defaultBenchmark: 16.5 }
   ];
 
@@ -57,6 +58,7 @@ export class AssessmentService {
       'domain_2': 8,
       'domain_3': 9.5,
       'domain_4': 22,
+      'domain_5': 12,
       'domain_6': 16.5
     },
     customChildScores: {},
@@ -103,18 +105,18 @@ export class AssessmentService {
   readonly dynamicStandardReportText = computed(() => {
     const rows = this.eligibilityComparison();
     const underCutoffRows = rows.filter(r => r.isUnderCutoff);
-    const total = rows.length; // 5
+    const total = rows.length; // 6 domains according to Table 1, Page 348
 
     if (underCutoffRows.length === total) {
-      // All 5 domains under cutoff (exact AEPS manual standard for all-under):
-      return 'تكشف هذه المقارنات أن درجات الأهداف العامة للمجالات للطفل أدنى من درجات القطع في كل المجالات النمائية الخمس التي يقيمها اختبار نظام القياس والتقويم والبرمجة ومن المرجح جداً أن يكون أداؤه أدنى بصورة ملحوظة من أقرانه في العمر الزمني ولذلك يستحق تلقي خدمات التدخل المبكر';
+      // All domains under cutoff (exact AEPS manual standard for all-under):
+      return 'تكشف هذه المقارنات أن درجات الأهداف العامة للمجالات للطفل أدنى من درجات القطع في كل المجالات النمائية الستة التي يقيمها اختبار نظام القياس والتقويم والبرمجة ومن المرجح جداً أن يكون أداؤه أدنى بصورة ملحوظة من أقرانه في العمر الزمني ولذلك يستحق تلقي خدمات التدخل المبكر';
     } else if (underCutoffRows.length > 0) {
       // Specific domains under cutoff:
       const domainNames = underCutoffRows.map(r => r.title).join('، ');
       return `تكشف هذه المقارنات أن درجات الأهداف العامة للمجالات للطفل أدنى من درجات القطع في: (${domainNames}) التي يقيمها اختبار نظام القياس والتقويم والبرمجة ومن المرجح جداً أن يكون أداؤه أدنى بصورة ملحوظة من أقرانه في العمر الزمني في هذه المجالات ولذلك يستحق تلقي خدمات التدخل المبكر`;
     } else {
       // None under cutoff:
-      return 'تكشف هذه المقارنات أن درجات الأهداف العامة للمجالات للطفل ضمن النطاق الملائم وأعلى من درجات القطع في كافة المجالات النمائية الخمس التي يقيمها اختبار نظام القياس والتقويم والبرمجة ومن غير المرجح أن يكون أداؤه أدنى بصورة ملحوظة من أقرانه في العمر الزمني ولذلك لا يستحق تلقي خدمات التدخل المبكر';
+      return 'تكشف هذه المقارنات أن درجات الأهداف العامة للمجالات للطفل ضمن النطاق الملائم وأعلى من درجات القطع في كافة المجالات النمائية الستة التي يقيمها اختبار نظام القياس والتقويم والبرمجة ومن غير المرجح أن يكون أداؤه أدنى بصورة ملحوظة من أقرانه في العمر الزمني ولذلك لا يستحق تلقي خدمات التدخل المبكر';
     }
   });
 
@@ -433,6 +435,7 @@ export class AssessmentService {
         'domain_2': 8,
         'domain_3': 9.5,
         'domain_4': 22,
+        'domain_5': 12,
         'domain_6': 16.5
       },
       customChildScores: {},

@@ -578,15 +578,14 @@
     <div class="page-step-3 fade-in no-print">
       <div class="moe-card cutoff-sheet-card">
 
-        <!-- Top Title Bar Matching Official Document -->
+        <!-- Top Title Bar Matching Official Document Table 1 Page 348 -->
         <div class="cutoff-sheet-header">
-          <div class="official-tag-pill">استمارة رسمية معتمدة</div>
+          <div class="official-tag-pill">الجدول (1) المعتمد من كتاب AEPS ص 348</div>
           <h2 class="cutoff-sheet-title">
-            درجات القطع لنظام القياس والتقويم والبرمجة AEPS ( لتقرير الأهلية لخدمات التدخل المبكر )
+            درجات القطع لاختبار نظام القياس والتقويم والبرمجة AEPS وفقاً للمجال النمائي والشرائح العمرية
           </h2>
           <p class="cutoff-sheet-subtitle">
-            تُسحب درجات الأهداف العامة تلقائياً من جداول الملاحظة والتقييم، مع إمكانية تعديل درجات القطع والملاحظات حسب
-            الشريحة العمرية
+            ( لتقرير الأهلية لخدمات التدخل المبكر ) — تُسحب درجات الأهداف العامة تلقائياً من المقياس مع تطبيق درجات القطع المعيارية الرسمية
           </p>
         </div>
 
@@ -620,28 +619,41 @@
           </div>
         </div>
 
-        <!-- Quick Age Bracket Presets Bar -->
+        <!-- Quick Age Bracket Presets Bar from Table 1, Page 348 -->
         <div class="age-preset-bar">
-          <span class="preset-label">
-            <span class="preset-icon">⏱️</span>
-            تطبيق درجات القطع المعيارية حسب الشريحة العمرية:
-          </span>
+          <div class="preset-level-switcher">
+            <span class="preset-label">
+              <span class="preset-icon">⏱️</span>
+              تطبيق درجات القطع المعيارية:
+            </span>
+            <div class="level-tabs">
+              <button type="button" class="btn-level-tab" [class.active]="activePresetLevel() === 'level2'"
+                (click)="setPresetLevel('level2')">
+                المستوى الثاني (3 إلى 6 سنوات - شرائح الستة أشهر) ⭐
+              </button>
+              <button type="button" class="btn-level-tab" [class.active]="activePresetLevel() === 'level1'"
+                (click)="setPresetLevel('level1')">
+                المستوى الأول (من الولادة حتى 3 سنوات - شرائح الـ 3 أشهر)
+              </button>
+            </div>
+          </div>
+
           <div class="preset-chips">
-            @for (preset of ageBracketPresets; track preset.label) {
+            @for (preset of currentAgePresets; track preset.label) {
             <button type="button" class="btn-preset-chip" [class.active]="selectedAgePreset() === preset.label"
-              (click)="applyAgePreset(preset)" title="تطبيق درجات القطع لهذه الشريحة">
-              {{ preset.label }}
+              (click)="applyAgePreset(preset)" [title]="preset.label + ' - ' + preset.desc">
+              <span class="chip-main">{{ preset.label }}</span>
             </button>
             }
           </div>
         </div>
 
-        <!-- The Comparison Table (5 Domains) -->
+        <!-- The Comparison Table (6 Domains Matching Table 1 Page 348) -->
         <div class="cutoff-table-wrapper">
           <table class="cutoff-official-table">
             <thead>
               <tr>
-                <th class="th-main-title">المجال</th>
+                <th class="th-main-title">المجال النمائي</th>
                 @for (row of service.eligibilityComparison(); track row.domainId) {
                 <th class="th-domain-col">{{ row.title }}</th>
                 }
@@ -701,6 +713,12 @@
               </tr>
             </tbody>
           </table>
+        </div>
+
+        <!-- Official Footnote from Book Page 348 -->
+        <div class="cutoff-table-note">
+          <span class="note-pin">📌</span>
+          <span><strong>ملحوظة معتمدة (ص 348 من كتاب AEPS):</strong> لم تشتق درجات قطع للأهلية للخدمات باختبار نظام القياس والتقويم والبرمجة للشريحة العمرية 0-3 شهراً والشريحة 67-72 شهراً لأنه لم تتوفر بيانات كافية لاشتقاق درجات قطع صادقة.</span>
         </div>
 
         <!-- Eligibility Decision (هل يحتاج الطفل إلى خدمات التدخل المبكر) -->
@@ -1047,7 +1065,7 @@
       <!-- 2. عنوان الاستمارة الرسمي بكامل عرض الصفحة ودون أي تزاحم -->
       <div class="print-cutoff-title-block">
         <h1 class="main-title-red">
-          درجات القطع لنظام القياس والتقويم والبرمجة AEPS
+          الجدول (1) درجات القطع لنظام القياس والتقويم والبرمجة AEPS وفقاً للمجال النمائي والشرائح العمرية
         </h1>
         <h2 class="sub-title-red">
           ( لتقرير الأهلية لخدمات التدخل المبكر )
@@ -1082,7 +1100,7 @@
       <table class="print-cutoff-table">
         <thead>
           <tr>
-            <th class="th-domain-label">المجال</th>
+            <th class="th-domain-label">المجال النمائي</th>
             @for (row of service.eligibilityComparison(); track row.domainId) {
             <th class="th-domain-col">{{ row.title }}</th>
             }
@@ -1112,6 +1130,11 @@
           </tr>
         </tbody>
       </table>
+
+      <!-- ملاحظة معتمدة من ص 348 من كتاب AEPS -->
+      <div class="print-cutoff-note">
+        📌 <strong>ملحوظة معتمدة (ص 348 من كتاب AEPS):</strong> لم تشتق درجات قطع للأهلية للخدمات باختبار نظام القياس والتقويم والبرمجة للشريحة العمرية 0-3 شهراً والشريحة 67-72 شهراً لأنه لم تتوفر بيانات كافية لاشتقاق درجات قطع صادقة.
+      </div>
 
       <!-- 5. سؤال استحقاق خدمات التدخل المبكر -->
       <div class="print-cutoff-decision">

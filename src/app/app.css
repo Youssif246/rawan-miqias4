@@ -1723,23 +1723,62 @@
 /* Preset Chips Bar */
 .age-preset-bar {
   display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 0.85rem;
   background: #f0fdf4;
-  border: 1px dashed #86efac;
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
+  border: 1.5px solid #86efac;
+  padding: 1rem 1.25rem;
+  border-radius: 10px;
   margin-bottom: 1.5rem;
 }
 
+.preset-level-switcher {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px dashed #bbf7d0;
+}
+
 .preset-label {
-  font-size: 0.85rem;
-  font-weight: 700;
+  font-size: 0.88rem;
+  font-weight: 800;
   color: #166534;
   display: flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: 0.4rem;
+}
+
+.level-tabs {
+  display: inline-flex;
+  background: #dcfce7;
+  padding: 3px;
+  border-radius: 8px;
+  gap: 4px;
+}
+
+.btn-level-tab {
+  background: transparent;
+  border: none;
+  padding: 0.45rem 0.9rem;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #166534;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-level-tab:hover {
+  background: rgba(22, 101, 52, 0.08);
+}
+
+.btn-level-tab.active {
+  background: #166534;
+  color: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
 }
 
 .preset-chips {
@@ -1752,7 +1791,7 @@
   background: #ffffff;
   border: 1px solid #86efac;
   color: #166534;
-  padding: 0.35rem 0.75rem;
+  padding: 0.4rem 0.85rem;
   border-radius: 6px;
   font-size: 0.82rem;
   font-weight: 700;
@@ -1770,7 +1809,7 @@
 /* Cutoff Table */
 .cutoff-table-wrapper {
   overflow-x: auto;
-  margin-bottom: 1.75rem;
+  margin-bottom: 1.5rem;
   border-radius: 8px;
   border: 1.5px solid #94a3b8;
 }
@@ -1785,25 +1824,48 @@
 .cutoff-official-table th,
 .cutoff-official-table td {
   border: 1.5px solid #94a3b8;
-  padding: 0.75rem 0.6rem;
+  padding: 0.75rem 0.5rem;
   vertical-align: middle;
 }
 
 .cutoff-official-table th.th-main-title {
   background: #f1f5f9;
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   font-weight: 800;
   color: #1e293b;
-  width: 25%;
+  width: 22%;
   text-align: right;
-  padding-right: 1rem;
+  padding-right: 0.85rem;
 }
 
 .cutoff-official-table th.th-domain-col {
   background: #f8fafc;
   color: var(--moe-deep-green);
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   font-weight: 800;
+  width: 13%;
+}
+
+/* Cutoff Table Official Footnote (Page 348) */
+.cutoff-table-note {
+  margin-top: -0.75rem;
+  margin-bottom: 1.5rem;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-right: 4px solid #d97706;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  font-size: 0.84rem;
+  line-height: 1.6;
+  color: #92400e;
+}
+
+.cutoff-table-note .note-pin {
+  font-size: 1.1rem;
+  line-height: 1;
 }
 
 .td-row-header {
@@ -2710,9 +2772,9 @@
   }
 
   .print-cutoff-table .th-domain-label {
-    width: 28%;
+    width: 22%;
     text-align: right;
-    padding-right: 10px;
+    padding-right: 8px;
   }
 
   .print-cutoff-table .td-row-title {
@@ -2720,22 +2782,34 @@
     font-weight: bold;
     background: #f8fafc;
     color: #0f172a;
-    padding-right: 10px;
+    padding-right: 8px;
   }
 
   .print-cutoff-table .td-score-val {
-    font-size: 10.5pt;
+    font-size: 10pt;
     font-weight: bold;
     color: #0f172a;
   }
 
   .print-cutoff-table .td-note-val {
     font-weight: bold;
-    font-size: 9pt;
+    font-size: 8.5pt;
   }
 
   .print-cutoff-table .td-note-val.danger-note {
     color: #b91c1c;
+  }
+
+  .print-cutoff-note {
+    margin-top: -6px;
+    margin-bottom: 12px;
+    font-size: 7.5pt;
+    line-height: 1.45;
+    color: #475569;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    padding: 5px 8px;
   }
 
   /* 5. سؤال التدخل المبكر */

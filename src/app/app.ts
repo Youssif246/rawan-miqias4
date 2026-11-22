@@ -24,16 +24,64 @@ export class App {
   readonly isGeneratingPdf = signal<boolean>(false);
   readonly pdfProgressText = signal<string>('جاري تجهيز وتنسيق التقرير...');
 
-  // Age preset benchmarks for AEPS cutoff scores
-  readonly ageBracketPresets = [
-    { label: 'شريحة 60 - 71 شهراً (5 إلى 6 سنوات)', values: { domain_1: 6.5, domain_2: 8, domain_3: 9.5, domain_4: 22, domain_6: 16.5 } },
-    { label: 'شريحة 48 - 59 شهراً (4 إلى 5 سنوات)', values: { domain_1: 5.5, domain_2: 7, domain_3: 8, domain_4: 18, domain_6: 14 } },
-    { label: 'شريحة 36 - 47 شهراً (3 إلى 4 سنوات)', values: { domain_1: 4.5, domain_2: 5.5, domain_3: 6.5, domain_4: 14, domain_6: 11 } }
+  // Level 2 Age Presets (المستوى الثاني: 3 إلى 6 سنوات - شرائح الستة أشهر) - الجدول (1) ص 348
+  readonly level2AgePresets = [
+    {
+      label: 'شريحة 61 - 66 شهراً',
+      desc: 'من 5 إلى 5.5 سنوات',
+      values: { domain_1: 6.5, domain_2: 8, domain_3: 9.5, domain_4: 22, domain_5: 12, domain_6: 16.5 }
+    },
+    {
+      label: 'شريحة 55 - 60 شهراً',
+      desc: 'من 4.5 إلى 5 سنوات',
+      values: { domain_1: 6, domain_2: 7, domain_3: 9, domain_4: 19, domain_5: 11, domain_6: 16 }
+    },
+    {
+      label: 'شريحة 49 - 54 شهراً',
+      desc: 'من 4 إلى 4.5 سنوات',
+      values: { domain_1: 5, domain_2: 6.5, domain_3: 9, domain_4: 18, domain_5: 10, domain_6: 15 }
+    },
+    {
+      label: 'شريحة 43 - 48 شهراً',
+      desc: 'من 3.5 إلى 4 سنوات',
+      values: { domain_1: 3, domain_2: 5.5, domain_3: 8, domain_4: 14, domain_5: 9, domain_6: 13.5 }
+    },
+    {
+      label: 'شريحة 37 - 42 شهراً',
+      desc: 'من 3 إلى 3.5 سنوات',
+      values: { domain_1: 2.5, domain_2: 5, domain_3: 7, domain_4: 10.5, domain_5: 8, domain_6: 11.5 }
+    }
   ];
 
-  readonly selectedAgePreset = signal<string>(this.ageBracketPresets[0].label);
+  // Level 1 Age Presets (المستوى الأول: من الولادة حتى 3 سنوات - شرائح الثلاثة أشهر) - الجدول (1) ص 348
+  readonly level1AgePresets = [
+    { label: 'شريحة 34 - 36 شهراً', desc: '3 سنوات', values: { domain_1: 16, domain_2: 21, domain_3: 13, domain_4: 30, domain_5: 16.5, domain_6: 10 } },
+    { label: 'شريحة 31 - 33 شهراً', desc: '2.5 سنة', values: { domain_1: 15.5, domain_2: 20, domain_3: 12, domain_4: 29, domain_5: 15.5, domain_6: 10 } },
+    { label: 'شريحة 28 - 30 شهراً', desc: '2.5 سنة', values: { domain_1: 13, domain_2: 19, domain_3: 11, domain_4: 25, domain_5: 15, domain_6: 9.5 } },
+    { label: 'شريحة 25 - 27 شهراً', desc: 'سنتان', values: { domain_1: 13, domain_2: 18, domain_3: 9.5, domain_4: 20, domain_5: 13, domain_6: 9 } },
+    { label: 'شريحة 22 - 24 شهراً', desc: 'سنتان', values: { domain_1: 12, domain_2: 17, domain_3: 9, domain_4: 20, domain_5: 12, domain_6: 9 } },
+    { label: 'شريحة 19 - 21 شهراً', desc: 'سنة ونصف', values: { domain_1: 11, domain_2: 16, domain_3: 8, domain_4: 14, domain_5: 10, domain_6: 9 } },
+    { label: 'شريحة 16 - 18 شهراً', desc: 'سنة ونصف', values: { domain_1: 9, domain_2: 13.5, domain_3: 5, domain_4: 11, domain_5: 7, domain_6: 5 } },
+    { label: 'شريحة 13 - 15 شهراً', desc: 'سنة', values: { domain_1: 7, domain_2: 10, domain_3: 4, domain_4: 7.5, domain_5: 5, domain_6: 4 } },
+    { label: 'شريحة 10 - 12 شهراً', desc: 'سنة', values: { domain_1: 6, domain_2: 7, domain_3: 2, domain_4: 5, domain_5: 4, domain_6: 2 } },
+    { label: 'شريحة 7 - 9 أشهر', desc: 'رضيع', values: { domain_1: 3.5, domain_2: 4, domain_3: 1, domain_4: 4, domain_5: 3, domain_6: 1 } },
+    { label: 'شريحة 4 - 6 أشهر', desc: 'رضيع', values: { domain_1: 2, domain_2: 2, domain_3: 0, domain_4: 2, domain_5: 1.5, domain_6: 0 } }
+  ];
 
-  applyAgePreset(preset: typeof this.ageBracketPresets[0]) {
+  readonly activePresetLevel = signal<'level2' | 'level1'>('level2');
+  readonly selectedAgePreset = signal<string>(this.level2AgePresets[0].label);
+
+  get currentAgePresets() {
+    return this.activePresetLevel() === 'level2' ? this.level2AgePresets : this.level1AgePresets;
+  }
+
+  setPresetLevel(lvl: 'level2' | 'level1') {
+    this.activePresetLevel.set(lvl);
+    const firstPreset = lvl === 'level2' ? this.level2AgePresets[0] : this.level1AgePresets[0];
+    this.applyAgePreset(firstPreset);
+  }
+
+  applyAgePreset(preset: { label: string; values: Record<string, number> }) {
     this.selectedAgePreset.set(preset.label);
     for (const [domId, val] of Object.entries(preset.values)) {
       this.service.updateBenchmark(domId, val);
