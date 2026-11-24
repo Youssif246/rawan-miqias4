@@ -2693,22 +2693,16 @@
   /* 2. عنوان الاستمارة بكامل العرض */
   .print-cutoff-title-block {
     text-align: center;
-    margin: 0 0 12px 0;
+    margin: 0 0 14px 0;
   }
 
   .main-title-red {
     color: #b91c1c !important;
     font-size: 13pt !important;
     font-weight: 800 !important;
-    margin: 0 0 3px 0 !important;
-    letter-spacing: -0.2px;
-  }
-
-  .sub-title-red {
-    color: #b91c1c !important;
-    font-size: 10.5pt !important;
-    font-weight: bold !important;
     margin: 0 !important;
+    line-height: 1.4 !important;
+    letter-spacing: -0.2px;
   }
 
   /* 3. بطاقة بيانات الطفل وفترة الملاحظة */
@@ -2802,50 +2796,19 @@
 
   .print-cutoff-note {
     margin-top: -6px;
-    margin-bottom: 12px;
-    font-size: 7.5pt;
-    line-height: 1.45;
+    margin-bottom: 14px;
+    font-size: 8pt;
+    line-height: 1.5;
     color: #475569;
     background: #f8fafc;
     border: 1px solid #cbd5e1;
     border-radius: 4px;
-    padding: 5px 8px;
-  }
-
-  /* 5. سؤال التدخل المبكر */
-  .print-cutoff-decision {
-    margin: 10px 0;
-    font-size: 10.5pt;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-  }
-
-  .decision-prompt {
-    color: #b91c1c;
-    font-weight: 800;
-  }
-
-  .checkbox-option {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    margin-right: 8px;
-    font-size: 10.5pt;
-    font-weight: bold;
-    color: #0f172a;
-  }
-
-  .checkbox-option .box-icon {
-    font-size: 13pt;
-    line-height: 1;
-    font-family: Arial, sans-serif;
+    padding: 6px 10px;
   }
 
   /* 6. فقرة التقرير الرسمية */
   .print-cutoff-report-section {
-    margin: 10px 0 14px 0;
+    margin: 0 0 14px 0;
   }
 
   .report-lead {

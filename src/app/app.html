@@ -578,14 +578,14 @@
     <div class="page-step-3 fade-in no-print">
       <div class="moe-card cutoff-sheet-card">
 
-        <!-- Top Title Bar Matching Official Document Table 1 Page 348 -->
+        <!-- Top Title Bar Matching Official Document -->
         <div class="cutoff-sheet-header">
-          <div class="official-tag-pill">الجدول (1) المعتمد من كتاب AEPS ص 348</div>
+          <div class="official-tag-pill">استمارة رسمية معتمدة</div>
           <h2 class="cutoff-sheet-title">
-            درجات القطع لاختبار نظام القياس والتقويم والبرمجة AEPS وفقاً للمجال النمائي والشرائح العمرية
+            درجات القطع لنظام القياس والتقويم والبرمجة AEPS (تقرير الأهلية لخدمات التدخل المبكر)
           </h2>
           <p class="cutoff-sheet-subtitle">
-            ( لتقرير الأهلية لخدمات التدخل المبكر ) — تُسحب درجات الأهداف العامة تلقائياً من المقياس مع تطبيق درجات القطع المعيارية الرسمية
+            تُسحب درجات الأهداف العامة تلقائياً من المقياس مع تطبيق درجات القطع المعيارية الرسمية
           </p>
         </div>
 
@@ -719,30 +719,6 @@
         <div class="cutoff-table-note">
           <span class="note-pin">📌</span>
           <span><strong>ملحوظة معتمدة (ص 348 من كتاب AEPS):</strong> لم تشتق درجات قطع للأهلية للخدمات باختبار نظام القياس والتقويم والبرمجة للشريحة العمرية 0-3 شهراً والشريحة 67-72 شهراً لأنه لم تتوفر بيانات كافية لاشتقاق درجات قطع صادقة.</span>
-        </div>
-
-        <!-- Eligibility Decision (هل يحتاج الطفل إلى خدمات التدخل المبكر) -->
-        <div class="eligibility-decision-box">
-          <span class="decision-label">هل يحتاج الطفل الى خدمات التدخل المبكر :</span>
-          <div class="decision-radios">
-            <button type="button" class="btn-decision-pill"
-              [class.active-yes]="service.effectiveNeedsIntervention() === true"
-              (click)="service.setManualNeedsIntervention(true)">
-              <span class="dec-circle">
-                <span class="dec-inner"></span>
-              </span>
-              <span class="decision-txt">نعم</span>
-            </button>
-
-            <button type="button" class="btn-decision-pill"
-              [class.active-no]="service.effectiveNeedsIntervention() === false"
-              (click)="service.setManualNeedsIntervention(false)">
-              <span class="dec-circle">
-                <span class="dec-inner"></span>
-              </span>
-              <span class="decision-txt">لا</span>
-            </button>
-          </div>
         </div>
 
         <!-- Report Text Box (التقرير) -->
@@ -1065,11 +1041,8 @@
       <!-- 2. عنوان الاستمارة الرسمي بكامل عرض الصفحة ودون أي تزاحم -->
       <div class="print-cutoff-title-block">
         <h1 class="main-title-red">
-          الجدول (1) درجات القطع لنظام القياس والتقويم والبرمجة AEPS وفقاً للمجال النمائي والشرائح العمرية
+          درجات القطع لنظام القياس والتقويم والبرمجة AEPS (تقرير الأهلية لخدمات التدخل المبكر)
         </h1>
-        <h2 class="sub-title-red">
-          ( لتقرير الأهلية لخدمات التدخل المبكر )
-        </h2>
       </div>
 
       <!-- 3. شبكة بيانات الطفل وفترة الملاحظة بتنسيق أنيق ومتناسق -->
@@ -1134,19 +1107,6 @@
       <!-- ملاحظة معتمدة من ص 348 من كتاب AEPS -->
       <div class="print-cutoff-note">
         📌 <strong>ملحوظة معتمدة (ص 348 من كتاب AEPS):</strong> لم تشتق درجات قطع للأهلية للخدمات باختبار نظام القياس والتقويم والبرمجة للشريحة العمرية 0-3 شهراً والشريحة 67-72 شهراً لأنه لم تتوفر بيانات كافية لاشتقاق درجات قطع صادقة.
-      </div>
-
-      <!-- 5. سؤال استحقاق خدمات التدخل المبكر -->
-      <div class="print-cutoff-decision">
-        <span class="decision-prompt">هل يحتاج الطفل إلى خدمات التدخل المبكر :</span>
-        <span class="checkbox-option">
-          <span class="box-icon">{{ service.effectiveNeedsIntervention() ? '☑' : '☐' }}</span>
-          <span class="box-txt">نعم</span>
-        </span>
-        <span class="checkbox-option">
-          <span class="box-icon">{{ !service.effectiveNeedsIntervention() ? '☑' : '☐' }}</span>
-          <span class="box-txt">لا</span>
-        </span>
       </div>
 
       <!-- 6. فقرة التقرير الرسمية -->
